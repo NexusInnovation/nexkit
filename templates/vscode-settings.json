@@ -7,7 +7,7 @@
         "nexkit.implement": true
     },
     "chat.tools.terminal.autoApprove": {
-        ".specify/scripts/bash/": true,
-        ".specify/scripts/ps/": true
+        ".nexkit/scripts/bash/": true,
+        ".nexkit/scripts/ps/": true
     }
 }

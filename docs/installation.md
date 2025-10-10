@@ -15,28 +15,28 @@
 The easiest way to get started is to initialize a new project:
 
 ```bash
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <PROJECT_NAME>
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <PROJECT_NAME>
 ```
 
 Or initialize in the current directory:
 
 ```bash
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init .
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init .
 # or use the --here flag
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init --here
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init --here
 ```
 
-### Specify AI Agent
+### Nexkit AI Agent
 
-You can proactively specify your AI agent during initialization:
+You can proactively choose your AI agent during initialization:
 
 ```bash
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <project_name> --ai claude
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <project_name> --ai gemini
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <project_name> --ai copilot
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <project_name> --ai claude
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <project_name> --ai gemini
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <project_name> --ai copilot
 ```
 
-### Specify Script Type (Shell vs PowerShell)
+### Nexkit Script Type (Shell vs PowerShell)
 
 All automation scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants.
 
@@ -47,8 +47,23 @@ Auto behavior:
 
 Force a specific script type:
 ```bash
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <project_name> --script sh
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <project_name> --script ps
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <project_name> --script sh
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <project_name> --script ps
+```
+
+### Global Installation (Optional)
+
+If you plan to use the tool frequently, you can install it globally:
+
+```bash
+uv tool install git+https://github.com/NexusInnovation/nexkit.git
+```
+
+Then run:
+```bash
+nexkit init <project_name>
+nexkit check  # to verify your system has all requirements
+```
 ```
 
 ### Ignore Agent Tools Check
@@ -56,7 +71,11 @@ uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <proje
 If you prefer to get the templates without checking for the right tools:
 
 ```bash
-uvx --from git+https://github.com/NexusInnovation/nexkit.git specify init <project_name> --ai claude --ignore-agent-tools
+If you're in a corporate environment or don't want to install dependencies:
+
+```bash
+uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <project_name> --ai claude --ignore-agent-tools
+```
 ```
 
 ## Verification
@@ -66,7 +85,7 @@ After initialization, you should see the following commands available in your AI
 - `/nexkit.plan` - Generate implementation plans  
 - `/nexkit.tasks` - Break down into actionable tasks
 
-The `.specify/scripts` directory will contain both `.sh` and `.ps1` scripts.
+The `.nexkit/scripts` directory will contain both `.sh` and `.ps1` scripts.
 
 ## Troubleshooting
 

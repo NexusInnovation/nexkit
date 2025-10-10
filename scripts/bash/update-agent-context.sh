@@ -62,17 +62,17 @@ AGENT_TYPE="${1:-}"
 CLAUDE_FILE="$REPO_ROOT/CLAUDE.md"
 GEMINI_FILE="$REPO_ROOT/GEMINI.md"
 COPILOT_FILE="$REPO_ROOT/.github/copilot-instructions.md"
-CURSOR_FILE="$REPO_ROOT/.cursor/rules/specify-rules.mdc"
+CURSOR_FILE="$REPO_ROOT/.cursor/rules/nexkit-rules.mdc"
 QWEN_FILE="$REPO_ROOT/QWEN.md"
 AGENTS_FILE="$REPO_ROOT/AGENTS.md"
-WINDSURF_FILE="$REPO_ROOT/.windsurf/rules/specify-rules.md"
-KILOCODE_FILE="$REPO_ROOT/.kilocode/rules/specify-rules.md"
-AUGGIE_FILE="$REPO_ROOT/.augment/rules/specify-rules.md"
-ROO_FILE="$REPO_ROOT/.roo/rules/specify-rules.md"
+WINDSURF_FILE="$REPO_ROOT/.windsurf/rules/nexkit-rules.md"
+KILOCODE_FILE="$REPO_ROOT/.kilocode/rules/nexkit-rules.md"
+AUGGIE_FILE="$REPO_ROOT/.augment/rules/nexkit-rules.md"
+ROO_FILE="$REPO_ROOT/.roo/rules/nexkit-rules.md"
 Q_FILE="$REPO_ROOT/AGENTS.md"
 
 # Template file
-TEMPLATE_FILE="$REPO_ROOT/.specify/templates/agent-file-template.md"
+TEMPLATE_FILE="$REPO_ROOT/.nexkit/templates/agent-file-template.md"
 
 # Global variables for parsed plan data
 NEW_LANG=""
@@ -122,7 +122,7 @@ validate_environment() {
         if [[ "$HAS_GIT" == "true" ]]; then
             log_info "Make sure you're on a feature branch"
         else
-            log_info "Set SPECIFY_FEATURE environment variable or create a feature first"
+            log_info "Set NEXKIT_FEATURE environment variable or create a feature first"
         fi
         exit 1
     fi
@@ -132,7 +132,7 @@ validate_environment() {
         log_error "No plan.md found at $NEW_PLAN"
         log_info "Make sure you're working on a feature with a corresponding spec directory"
         if [[ "$HAS_GIT" != "true" ]]; then
-            log_info "Use: export SPECIFY_FEATURE=your-feature-name or create a new feature first"
+            log_info "Use: export NEXKIT_FEATURE=your-feature-name or create a new feature first"
         fi
         exit 1
     fi

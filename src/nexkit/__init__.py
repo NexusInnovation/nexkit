@@ -887,6 +887,7 @@ def init(
     here: bool = typer.Option(False, "--here", help="Initialize project in the current directory instead of creating a new one"),
     force: bool = typer.Option(False, "--force", help="Force merge/overwrite when using --here (skip confirmation)"),
     skip_tls: bool = typer.Option(False, "--skip-tls", help="Skip SSL/TLS verification (not recommended)"),
+    skip_check: bool = typer.Option(False, "--skip-check", help="Skip running the environment check before initialization"),
     debug: bool = typer.Option(False, "--debug", help="Show verbose diagnostic output for network and extraction failures"),
     github_token: str = typer.Option(None, "--github-token", help="GitHub token to use for API requests (or set GH_TOKEN or GITHUB_TOKEN environment variable)"),
 ):
@@ -1059,6 +1060,14 @@ def init(
 
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
     console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
+
+    # Run environment checks (MCP, tools) as part of init unless explicitly skipped
+    if not skip_check:
+        try:
+            check()
+        except typer.Exit:
+            console.print("[red]Environment check failed — aborting initialization.[/red]")
+            raise
 
     # Download and set up project
     # New tree-based progress (no emojis); include earlier substeps

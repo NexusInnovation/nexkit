@@ -7,6 +7,19 @@ All notable changes to the Specify CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-10-10
+
+### Added
+
+- New `/nexkit.commit` command template for intelligent commit workflow that analyzes changes, extracts work item context, and creates meaningful commit messages
+- New `/nexkit.implement-workitem` command template for quick implementation workflow using Azure DevOps work item information
+- New `/nexkit.refine-workitem` command template for adding refinement context to existing user stories via related improvement work items
+
+### Changed
+
+- Updated CLI help output to include the three new optional commands in the Enhancement Commands section
+- Updated documentation in README.md and docs/installation.md to include the new commands with descriptions
+
 ## [0.0.18] - 2025-10-06
 
 ### Added

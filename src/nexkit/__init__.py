@@ -1047,7 +1047,10 @@ def init(
         "",
         f"○ [cyan]/nexkit.clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/nexkit.plan[/] if used)",
         f"○ [cyan]/nexkit.analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/nexkit.tasks[/], before [cyan]/nexkit.implement[/])",
-        f"○ [cyan]/nexkit.checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/nexkit.plan[/])"
+        f"○ [cyan]/nexkit.checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/nexkit.plan[/])",
+        f"○ [cyan]/nexkit.commit[/] [bright_black](optional)[/bright_black] - Generate intelligent commit messages and commit staged code with work item context",
+        f"○ [cyan]/nexkit.implement-workitem[/] [bright_black](optional)[/bright_black] - Quick implementation workflow using Azure DevOps work item information",
+        f"○ [cyan]/nexkit.refine-workitem[/] [bright_black](optional)[/bright_black] - Add refinement context to existing user stories via related improvement work items"
     ]
     enhancements_panel = Panel("\n".join(enhancement_lines), title="Enhancement Commands", border_style="cyan", padding=(1,2))
     console.print()

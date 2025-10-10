@@ -228,11 +228,14 @@ Essential commands for the Spec-Driven Development workflow:
 
 Additional commands for enhanced quality and validation:
 
-| Command              | Description                                                           |
-|----------------------|-----------------------------------------------------------------------|
-| `/nexkit.clarify`   | Clarify underspecified areas (recommended before `/nexkit.plan`; formerly `/quizme`) |
-| `/nexkit.analyze`   | Cross-artifact consistency & coverage analysis (run after `/nexkit.tasks`, before `/nexkit.implement`) |
-| `/nexkit.checklist` | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
+| Command                     | Description                                                           |
+|-----------------------------|-----------------------------------------------------------------------|
+| `/nexkit.clarify`          | Clarify underspecified areas (recommended before `/nexkit.plan`; formerly `/quizme`) |
+| `/nexkit.analyze`          | Cross-artifact consistency & coverage analysis (run after `/nexkit.tasks`, before `/nexkit.implement`) |
+| `/nexkit.checklist`        | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
+| `/nexkit.commit`           | Generate intelligent commit messages and commit staged code with work item context |
+| `/nexkit.implement-workitem` | Quick implementation workflow using Azure DevOps work item information |
+| `/nexkit.refine-workitem`  | Add refinement context to existing user stories via related improvement work items |
 
 ### Environment Variables
 

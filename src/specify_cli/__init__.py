@@ -350,7 +350,7 @@ def check_tool(tool: str, install_hint: str) -> bool:
     """Check if a tool is installed."""
     
     # Special handling for Claude CLI after `claude migrate-installer`
-    # See: https://github.com/decarufe/spec-kit/issues/123
+    # See: https://github.com/NexusInnovation/nexkit/issues/123
     # The migrate-installer command REMOVES the original executable from PATH
     # and creates an alias at ~/.claude/local/claude instead
     # This path should be prioritized over other claude executables in PATH
@@ -407,8 +407,8 @@ def init_git_repo(project_path: Path, quiet: bool = False) -> bool:
         os.chdir(original_cwd)
 
 def download_template_from_github(ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, show_progress: bool = True, client: httpx.Client = None, debug: bool = False, github_token: str = None) -> Tuple[Path, dict]:
-    repo_owner = "decarufe"
-    repo_name = "spec-kit"
+    repo_owner = "NexusInnovation"
+    repo_name = "nexkit"
     if client is None:
         client = httpx.Client(verify=ssl_context)
 
@@ -441,7 +441,7 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
 
     # Find the template asset for the specified AI assistant
     assets = release_data.get("assets", [])
-    pattern = f"spec-kit-template-{ai_assistant}-{script_type}"
+    pattern = f"nexkit-template-{ai_assistant}-{script_type}"
     matching_assets = [
         asset for asset in assets
         if pattern in asset["name"] and asset["name"].endswith(".zip")
@@ -1032,11 +1032,11 @@ def init(
 
     steps_lines.append(f"{step_num}. Start using slash commands with your AI agent:")
 
-    steps_lines.append("   2.1 [cyan]/speckit.constitution[/] - Establish project principles")
-    steps_lines.append("   2.2 [cyan]/speckit.specify[/] - Create baseline specification")
-    steps_lines.append("   2.3 [cyan]/speckit.plan[/] - Create implementation plan")
-    steps_lines.append("   2.4 [cyan]/speckit.tasks[/] - Generate actionable tasks")
-    steps_lines.append("   2.5 [cyan]/speckit.implement[/] - Execute implementation")
+    steps_lines.append("   2.1 [cyan]/nexkit.constitution[/] - Establish project principles")
+    steps_lines.append("   2.2 [cyan]/nexkit.specify[/] - Create baseline specification")
+    steps_lines.append("   2.3 [cyan]/nexkit.plan[/] - Create implementation plan")
+    steps_lines.append("   2.4 [cyan]/nexkit.tasks[/] - Generate actionable tasks")
+    steps_lines.append("   2.5 [cyan]/nexkit.implement[/] - Execute implementation")
 
     steps_panel = Panel("\n".join(steps_lines), title="Next Steps", border_style="cyan", padding=(1,2))
     console.print()
@@ -1045,9 +1045,9 @@ def init(
     enhancement_lines = [
         "Optional commands that you can use for your specs [bright_black](improve quality & confidence)[/bright_black]",
         "",
-        f"○ [cyan]/speckit.clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/speckit.plan[/] if used)",
-        f"○ [cyan]/speckit.analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/speckit.tasks[/], before [cyan]/speckit.implement[/])",
-        f"○ [cyan]/speckit.checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/speckit.plan[/])"
+        f"○ [cyan]/nexkit.clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/nexkit.plan[/] if used)",
+        f"○ [cyan]/nexkit.analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/nexkit.tasks[/], before [cyan]/nexkit.implement[/])",
+        f"○ [cyan]/nexkit.checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/nexkit.plan[/])"
     ]
     enhancements_panel = Panel("\n".join(enhancement_lines), title="Enhancement Commands", border_style="cyan", padding=(1,2))
     console.print()

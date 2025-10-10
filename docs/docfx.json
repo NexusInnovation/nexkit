@@ -62,7 +62,7 @@
       "_enableSearch": true,
       "_disableContribution": false,
       "_gitContribute": {
-        "repo": "https://github.com/decarufe/spec-kit",
+        "repo": "https://github.com/NexusInnovation/nexkit",
         "branch": "main"
       }
     }

@@ -363,6 +363,163 @@ def check_tool(tool: str, install_hint: str) -> bool:
     else:
         return False
 
+def _read_mcp_servers_from_path(path: Path) -> dict:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data.get("servers", {}) if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def check_mcp_server(package: str, repo_tokens: list[str] | None = None) -> tuple[bool, str]:
+    """Check if an MCP server is configured.
+
+    Strategy:
+    1. Look for matching repo token(s) in project `.vscode/mcp.json` servers args.
+    2. Look in user-level mcp.json (`%APPDATA%/Code/User/mcp.json` or ~/.config/Code/User/mcp.json).
+    3. Fall back to an npx probe (best-effort but not relied on).
+    """
+    repo_tokens = repo_tokens or [package]
+
+    # 1) Project-level .vscode/mcp.json
+    project_mcp = Path.cwd() / ".vscode" / "mcp.json"
+    servers = _read_mcp_servers_from_path(project_mcp) if project_mcp.exists() else {}
+    for sname, svalue in servers.items():
+        args = svalue.get("args", []) if isinstance(svalue, dict) else []
+        for a in args:
+            for token in repo_tokens:
+                if token and token in str(a):
+                    return True, "project"
+
+    # 2) User-level mcp.json
+    appdata = os.getenv("APPDATA")
+    if appdata:
+        user_mcp = Path(appdata) / "Code" / "User" / "mcp.json"
+    else:
+        user_mcp = Path.home() / ".config" / "Code" / "User" / "mcp.json"
+
+    servers = _read_mcp_servers_from_path(user_mcp) if user_mcp.exists() else {}
+    for sname, svalue in servers.items():
+        args = svalue.get("args", []) if isinstance(svalue, dict) else []
+        for a in args:
+            for token in repo_tokens:
+                if token and token in str(a):
+                    return True, "user"
+
+    # 3) Fallback to npx probe (best-effort)
+    try:
+        result = subprocess.run(
+            ["npx", "-y", "--quiet", package, "--help"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        return (result.returncode == 0, "npx")
+    except Exception:
+        return (False, "")
+
+def install_mcp_server(package: str, server_key: str, description: str) -> bool:
+    """Add or update an MCP server entry in the user's VS Code mcp.json.
+
+    Instead of installing an npm package globally, MCP servers for VS Code are
+    configured in the `mcp.json` file under the user's VS Code settings folder
+    (Windows: %APPDATA%/Code/User/mcp.json). This function will prompt the
+    user for permission and required parameters (for Azure DevOps) and then
+    create/update the mcp.json servers and inputs accordingly.
+    """
+    console.print(f"\n[yellow]Configuring MCP Server:[/yellow] {description}")
+    console.print(f"[dim]Package:[/dim] {package}")
+
+    # For Azure DevOps we prefer project-level configuration (.vscode/mcp.json)
+    is_azure = ("azure-devops" in package or server_key.lower().startswith("ado") or "azure" in server_key.lower())
+
+    if is_azure:
+        mcp_path = Path.cwd() / ".vscode" / "mcp.json"
+        console.print(f"[dim]Configuring project-level MCP (will write to: {mcp_path})[/dim]")
+    else:
+        # Determine user-level mcp.json path (cross-platform fallback)
+        appdata = os.getenv("APPDATA")
+        if appdata:
+            mcp_path = Path(appdata) / "Code" / "User" / "mcp.json"
+        else:
+            # Fallback for non-Windows: use standard VS Code user settings location
+            mcp_path = Path.home() / ".config" / "Code" / "User" / "mcp.json"
+
+        console.print(f"[dim]mcp.json path: {mcp_path}[/dim]")
+
+    if not typer.confirm(f"Would you like to add {description} to {mcp_path}?", default=True):
+        console.print(f"[yellow]Skipping MCP server configuration for {description}[/yellow]")
+        return False
+
+    # Load existing mcp.json if present
+    data = {"inputs": [], "servers": {}}
+    if mcp_path.exists():
+        try:
+            with open(mcp_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception as e:
+            console.print(f"[red]Failed to read existing mcp.json:[/red] {e}")
+            return False
+
+    # Ensure top-level keys
+    data.setdefault("inputs", [])
+    data.setdefault("servers", {})
+
+    # Helper to add input metadata only if missing
+    def ensure_input(input_id: str, description_text: str):
+        inputs = data["inputs"]
+        for inp in inputs:
+            if inp.get("id") == input_id:
+                return
+        inputs.append({"id": input_id, "type": "promptString", "description": description_text})
+
+    # Build server entry depending on package
+    args = ["-y", package]
+    # Special handling for Azure DevOps to collect org/tenant/project and write project-level mcp.json
+    if is_azure:
+        # Ask the user for organization, tenant and project (tenant/project optional)
+        console.print("\nAzure DevOps MCP Server requires organization context. You can either provide the values now or leave blank to prompt in VS Code at runtime.")
+        org = typer.prompt("Azure DevOps Organization name (e.g. 'contoso') (leave blank to prompt in VS Code)", default="")
+        tenant = typer.prompt("Azure tenant id (optional)", default="")
+        project = typer.prompt("Project name (optional)", default="")
+
+        if org:
+            args.append(org)
+        else:
+            # Use an input placeholder so VS Code will prompt when starting the server
+            args.append("${input:ado_org}")
+            ensure_input("ado_org", "Azure DevOps organization name (e.g. 'contoso')")
+
+        # Add authentication mode used in examples; default to azcli in examples
+        args.extend(["--authentication", "azcli"])
+
+        if tenant:
+            args.extend(["--tenant", tenant])
+        # Project is optional; include if provided
+        if project:
+            args.append(project)
+
+    # Final server entry
+    server_entry = {"type": "stdio", "command": "npx", "args": args}
+
+    # Use the provided server_key as the key in the JSON (keep existing casing)
+    data["servers"][server_key] = server_entry
+
+    # Backup existing file then write
+    try:
+        if mcp_path.exists():
+            backup = mcp_path.with_suffix(".bak")
+            shutil.copy2(mcp_path, backup)
+        mcp_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(mcp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        console.print(f"[green]Wrote MCP configuration to {mcp_path}[/green]")
+        return True
+    except Exception as e:
+        console.print(f"[red]Failed to write mcp.json:[/red] {e}")
+        return False
+
 def is_git_repo(path: Path = None) -> bool:
     """Check if the specified path is inside a git repository."""
     if path is None:
@@ -1064,6 +1221,7 @@ def check():
 
     tracker = StepTracker("Check Available Tools")
 
+    # Traditional CLI tools
     tracker.add("git", "Git version control")
     tracker.add("claude", "Claude Code CLI")
     tracker.add("gemini", "Gemini CLI")
@@ -1077,6 +1235,11 @@ def check():
     tracker.add("codex", "Codex CLI")
     tracker.add("auggie", "Auggie CLI")
     tracker.add("q", "Amazon Q Developer CLI")
+    
+    # Required MCP servers (use the canonical server keys so they appear once)
+    tracker.add("AzureDevOps", "Azure DevOps MCP Server")
+    tracker.add("context7", "Context7 MCP Server")
+    tracker.add("sequentialthinking", "Sequential Thinking MCP Server")
 
     git_ok = check_tool_for_tracker("git", tracker)
     claude_ok = check_tool_for_tracker("claude", tracker)  
@@ -1092,7 +1255,56 @@ def check():
     auggie_ok = check_tool_for_tracker("auggie", tracker)
     q_ok = check_tool_for_tracker("q", tracker)
 
+    # Check MCP servers
+    # Each entry: (npm_package, server_key, description, repo_tokens)
+    mcp_servers = [
+        ("@azure-devops/mcp", "AzureDevOps", "Azure DevOps MCP Server", ["@azure-devops/mcp", "azure-devops-mcp", "azure-devops"]),
+        ("@upstash/context7-mcp", "context7", "Context7 MCP Server", ["context7-mcp", "context7"]),
+        ("@modelcontextprotocol/server-sequential-thinking", "sequentialthinking", "Sequential Thinking MCP Server", ["server-sequential-thinking", "sequential-thinking", "sequentialthinking"])
+    ]
+    
+    mcp_results = {}
+    for package, key, description, tokens in mcp_servers:
+        found, location = check_mcp_server(package, repo_tokens=tokens)
+        if found:
+            detail = "available (project)" if location == "project" else ("available (user)" if location == "user" else "available (npx)")
+            tracker.complete(key, detail)
+            mcp_results[key] = True
+        else:
+            tracker.error(key, "not found")
+            mcp_results[key] = False
+
     console.print(tracker.render())
+
+    # Check if any required MCP servers are missing
+    missing_mcp = [
+        (package, key, description, tokens) for (package, key, description, tokens) in mcp_servers 
+        if not mcp_results[key]
+    ]
+    
+    if missing_mcp:
+        console.print(f"\n[yellow]Found {len(missing_mcp)} missing required MCP server(s)[/yellow]")
+        
+        # Check if npm is available for installation
+        if not shutil.which("npm"):
+            console.print("[red]Error:[/red] npm is required to install MCP servers")
+            console.print("[dim]Install Node.js from: https://nodejs.org/[/dim]")
+            raise typer.Exit(1)
+        
+        # Attempt to configure missing MCP servers in user's mcp.json
+        installation_success = True
+        for package, key, description, tokens in missing_mcp:
+            # Use the canonical server key provided in mcp_servers (e.g. 'AzureDevOps', 'context7')
+            server_key = key
+            success = install_mcp_server(package, server_key, description)
+            if not success:
+                installation_success = False
+        
+        if not installation_success:
+            console.print(f"\n[yellow]Some MCP servers could not be installed automatically.[/yellow]")
+            console.print("[dim]You can install them manually using:[/dim]")
+            for package, description in missing_mcp:
+                console.print(f"  npm install -g {package}")
 
     console.print("\n[bold green]Nexkit CLI is ready to use![/bold green]")
 
@@ -1100,6 +1312,8 @@ def check():
         console.print("[dim]Tip: Install git for repository management[/dim]")
     if not (claude_ok or gemini_ok or cursor_ok or qwen_ok or windsurf_ok or kilocode_ok or opencode_ok or codex_ok or auggie_ok or q_ok):
         console.print("[dim]Tip: Install an AI assistant for the best experience[/dim]")
+    if missing_mcp and not all(mcp_results.values()):
+        console.print("[dim]Tip: MCP servers provide enhanced AI capabilities[/dim]")
 
 def main():
     app()

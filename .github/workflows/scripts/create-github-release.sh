@@ -14,6 +14,12 @@ VERSION="$1"
 
 # Remove 'v' prefix from version for release title
 VERSION_NO_V=${VERSION#v}
+if [[ "${FORCE_RELEASE:-false}" == "true" ]]; then
+  echo "FORCE_RELEASE=true; deleting existing release (if any) and associated tag: $VERSION" >&2
+  # Try to delete release and tag if they exist; ignore errors
+  gh release view "$VERSION" >/dev/null 2>&1 && gh release delete "$VERSION" --yes || true
+  git tag -l "$VERSION" >/dev/null 2>&1 && git push origin --delete "$VERSION" || true
+fi
 
 gh release create "$VERSION" \
   .genreleases/nexkit-template-copilot-sh-"$VERSION".zip \

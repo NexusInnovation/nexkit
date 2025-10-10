@@ -1,110 +1,181 @@
-## Contributing to Spec Kit
 
-Hi there! We're thrilled that you'd like to contribute to Spec Kit. Contributions to this project are [released](https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license) to the public under the [project's open source license](LICENSE).
+# Contributing to Nexkit (Spec Kit)
 
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+Welcome — thank you for wanting to contribute. This document is a concise, step-by-step guide to get new developers up and running quickly: how to set up a local development environment, modify and test the project locally, publish changes, and create releases (with versioning guidance).
 
-## Prerequisites for running and testing code
+## Quick summary
 
-These are one time installations required to be able to test your changes locally as part of the pull request (PR) submission process.
+- Setup: Install Python 3.11+, Git, the `uv` tool, and an editor (VS Code recommended). Create a fork and clone.
+- Local dev: Use `uv` to sync dependencies, run the CLI during development, and use the included scripts to run tests and linters.
+- Publish: Create a branch, commit changes, open a PR with tests/docs, and wait for review.
+- Releases: The repository uses semantic-style versioning (major.minor.patch). The CI computes the next patch version automatically; bump major/minor manually when appropriate.
 
-1. Install [Python 3.11+](https://www.python.org/downloads/)
-1. Install [uv](https://docs.astral.sh/uv/) for package management
-1. Install [Git](https://git-scm.com/downloads)
-1. Have an [AI coding agent available](README.md#-supported-ai-agents)
+## 1) Prerequisites and environment setup
 
-## Submitting a pull request
+These instructions assume you are on Windows (PowerShell) but are similar for macOS/Linux.
 
->[!NOTE]
->If your pull request introduces a large change that materially impacts the work of the CLI or the rest of the repository (e.g., you're introducing new templates, arguments, or otherwise major changes), make sure that it was **discussed and agreed upon** by the project maintainers. Pull requests with large changes that did not have a prior conversation and agreement will be closed.
+1. Install Python 3.11 or later
+	- Download and install from https://www.python.org/downloads/
+	- Make sure `python --version` or `py -3 --version` shows 3.11+
 
-1. Fork and clone the repository
-1. Configure and install the dependencies: `uv sync`
-1. Make sure the CLI works on your machine: `uv run specify --help`
-1. Create a new branch: `git checkout -b my-branch-name`
-1. Make your change, add tests, and make sure everything still works
-1. Test the CLI functionality with a sample project if relevant
-1. Push to your fork and submit a pull request
-1. Wait for your pull request to be reviewed and merged.
+2. Install Git
+	- https://git-scm.com/downloads
+	- Configure your name and email:
+	  ```powershell
+	  git config --global user.name "Your Name"
+	  git config --global user.email "you@example.com"
+	  ```
 
-Here are a few things you can do that will increase the likelihood of your pull request being accepted:
+3. Install the `uv` tool (used by this repo for tasks)
+	- `uv` is the package manager/runner used by this project. Follow https://docs.astral.sh/uv/ to install.
+	- Verify with:
+	  ```powershell
+	  uv --version
+	  ```
 
-- Follow the project's coding conventions.
-- Write tests for new functionality.
-- Update documentation (`README.md`, `spec-driven.md`) if your changes affect user-facing features.
-- Keep your change as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
-- Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
-- Test your changes with the Spec-Driven Development workflow to ensure compatibility.
+4. Install GitHub CLI (optional but recommended for release and workflow runs)
+	- https://cli.github.com/
+	- Authenticate: `gh auth login`
 
-## Development workflow
+5. Clone the repository
+	- Fork the repository on GitHub (recommended) then:
+	  ```powershell
+	  git clone https://github.com/<your-user>/nexkit.git
+	  cd nexkit
+	  ```
 
-When working on nexkit:
+6. Create a virtual environment (optional but recommended)
+	- Using venv:
+	  ```powershell
+	  python -m venv .venv
+	  .\.venv\Scripts\Activate.ps1
+	  ```
 
-1. Test changes with the `specify` CLI commands (`/nexkit.specify`, `/nexkit.plan`, `/nexkit.tasks`) in your coding agent of choice
-2. Verify templates are working correctly in `templates/` directory
-3. Test script functionality in the `scripts/` directory
-4. Ensure memory files (`memory/constitution.md`) are updated if major process changes are made
+7. Install / sync project dependencies
+	- The repo uses `uv` to manage setup tasks. Run:
+	  ```powershell
+	  uv sync
+	  ```
+	- Confirm CLI help works:
+	  ```powershell
+	  uv run nexkit --help
+	  ```
 
-## AI contributions in Spec Kit
+## 2) Modify, run and test locally
 
-> [!IMPORTANT]
->
-> If you are using **any kind of AI assistance** to contribute to Spec Kit,
-> it must be disclosed in the pull request or issue.
+A disciplined workflow keeps changes small, tested, and documented.
 
-We welcome and encourage the use of AI tools to help improve Spec Kit! Many valuable contributions have been enhanced with AI assistance for code generation, issue detection, and feature definition.
+1. Create a feature branch
+	```powershell
+	git checkout -b feat/my-feature
+	```
 
-That being said, if you are using any kind of AI assistance (e.g., agents, ChatGPT) while contributing to Spec Kit,
-**this must be disclosed in the pull request or issue**, along with the extent to which AI assistance was used (e.g., documentation comments vs. code generation).
+2. Make changes
+	- Edit files in `src/nexkit/`, `templates/`, or scripts in `scripts/` as appropriate.
+	- Keep changes focused: one logical change per branch/PR.
 
-If your PR responses or comments are being generated by an AI, disclose that as well.
+3. Run linters and unit checks
+	- Project-specific checks are available via `uv` tasks. Run the repo's check task:
+	  ```powershell
+	  uv run nexkit check
+	  ```
+	- If you add Python code, run unit tests (if any exist) or add tests to `tests/`.
 
-As an exception, trivial spacing or typo fixes don't need to be disclosed, so long as the changes are limited to small parts of the code or short phrases.
+4. Run the CLI locally to exercise integration
+	- There are small helper CLI commands bundled, for example:
+	  ```powershell
+	  uv run nexkit.specify --help
+	  uv run nexkit.plan --help
+	  ```
+	- Use your editor's debugger or simple `print`/logging to validate logic.
 
-An example disclosure:
+5. Test templates and scripts
+	- Templates are in `templates/`. If you changed templates, exercise them using the CLI or sample projects.
+	- Scripts to build release artifacts are under `.github/workflows/scripts/`. Test them locally when appropriate but be careful: scripts that use `gh` will act on your authenticated GitHub account.
 
-> This PR was written primarily by GitHub Copilot.
+6. Write or update documentation
+	- Update `README.md`, `docs/`, or `templates/` files if your changes affect the user experience.
 
-Or a more detailed disclosure:
+7. Commit changes and push
+	```powershell
+	git add -A
+	git commit -m "feat: short description of change"
+	git push origin feat/my-feature
+	```
 
-> I consulted ChatGPT to understand the codebase but the solution
-> was fully authored manually by myself.
+## 3) Submit a Pull Request
 
-Failure to disclose this is first and foremost rude to the human operators on the other end of the pull request, but it also makes it difficult to
-determine how much scrutiny to apply to the contribution.
+1. Open a PR from your branch to `main` on the repository (or to the main repo if you have push access).
+2. In the PR description:
+	- Describe the change; show short examples if applicable.
+	- Include testing steps and evidence that you ran the checks locally.
+	- If you used AI assistance, disclose it (see policy in the repository).
 
-In a perfect world, AI assistance would produce equal or higher quality work than any human. That isn't the world we live in today, and in most cases
-where human supervision or expertise is not in the loop, it's generating code that cannot be reasonably maintained or evolved.
+3. Add reviewers and wait for CI to run
+	- CI will run the `Create Release` workflow (only on main) and other checks. Make sure your changes are compatible.
 
-### What we're looking for
+4. Address review feedback: update code, tests, and docs as requested.
 
-When submitting AI-assisted contributions, please ensure they include:
+## 4) Publishing your update (merge & release process)
 
-- **Clear disclosure of AI use** - You are transparent about AI use and degree to which you're using it for the contribution
-- **Human understanding and testing** - You've personally tested the changes and understand what they do
-- **Clear rationale** - You can explain why the change is needed and how it fits within Spec Kit's goals  
-- **Concrete evidence** - Include test cases, scenarios, or examples that demonstrate the improvement
-- **Your own analysis** - Share your thoughts on the end-to-end developer experience
+A. Merging the PR
+- After reviews and passing CI, merge the PR into `main` using a merge commit or squash (follow repo conventions).
 
-### What we'll close
+B. How releases are created
+- The repository has a GitHub Actions workflow (`.github/workflows/release.yml`) that runs on pushes to `main` and on manual dispatch.
+- It determines the next version by incrementing the patch number (vMAJOR.MINOR.PATCH) from the most recent tag.
+- If the computed release tag already exists, the workflow normally skips release creation to avoid duplicates.
 
-We reserve the right to close contributions that appear to be:
+C. Creating a release manually or when you need to re-publish
+- To create a release automatically: merge to `main` and the workflow will attempt to create a release for the computed version (if it does not already exist).
+- To re-create the same release (for example, you need to re-upload assets), use the workflow_dispatch with `force_release=true`.
+  - From the GitHub UI: Actions -> Create Release -> Run workflow -> set `force_release` to `true`.
+  - Or using `gh`:
+	 ```powershell
+	 gh workflow run release.yml --ref main -f force_release=true
+	 ```
+  - This will delete the existing release (and the remote tag if present) and create a fresh release with the same tag and the newly generated assets.
 
-- Untested changes submitted without verification
-- Generic suggestions that don't address specific Spec Kit needs
-- Bulk submissions that show no human review or understanding
+D. When to bump major or minor version
+- Patch (x.y.Z): default automatic increment. Use for bug fixes, minor improvements, or non-breaking changes. The workflow automatically increments the patch number.
+- Minor (x.Y.z): bump the minor version when you add new features in a backward-compatible way or add new templates or CLI features that are additive.
+- Major (X.y.z): bump the major version when you make incompatible changes (breaking changes to CLI behavior, removal of features, or API changes that will break existing users).
 
-### Guidelines for success
+How to perform a manual major/minor bump
+1. Decide the new version number and update `pyproject.toml` or other canonical version source if required by your change (the workflow will update `pyproject.toml` for releases, but for major/minor bumps it's clearer to update it in the PR and call that out in the PR body).
+2. Add a note in the PR: why major/minor bumped and migration guidance for users.
+3. Merge to `main`. The release workflow will still compute the next patch tag unless you explicitly create a release tag yourself — if you need a deterministic version (for major/minor), tag the commit manually and push the tag:
+	```powershell
+	git tag v2.0.0
+	git push origin v2.0.0
+	```
+	The workflow will pick up tags and release as configured.
 
-The key is demonstrating that you understand and have validated your proposed changes. If a maintainer can easily tell that a contribution was generated entirely by AI without human input or testing, it likely needs more work before submission.
+## 5) Additional tips and guardrails
 
-Contributors who consistently submit low-effort AI-generated changes may be restricted from further contributions at the maintainers' discretion.
+- Keep changes atomic and tests small. Large PRs are harder to review.
+- Document any user-facing changes in `docs/` and in the PR description.
+- If you must re-create a release for any reason, prefer the `force_release` workflow path rather than manually deleting things on GitHub unless you understand the consequences.
+- Avoid running release scripts (`.github/workflows/scripts/*`) against the real repo when testing locally unless you are comfortable with `gh` and tags; prefer running them in a fork or with a dry-run approach.
 
-Please be respectful to maintainers and disclose AI assistance.
+## 6) Troubleshooting
 
-## Resources
+- Workflow skipped because release exists: either merge a new commit so the computed patch increments, or run the `Create Release` workflow with `force_release=true` (see above).
+- Assets failed to upload: check the release workflow logs. You can re-run the workflow from the Actions UI or use `gh` to upload assets to an existing release.
 
-- [Spec-Driven Development Methodology](./spec-driven.md)
-- [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
-- [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
-- [GitHub Help](https://help.github.com)
+## 7) Security & contribution rules
+
+- Follow the Contributor Code of Conduct in `CODE_OF_CONDUCT.md`.
+- Disclose any AI assistance in PRs according to the repository policy.
+- Do not commit secrets. Use repository secrets for credentials in workflows.
+
+## 8) Contacts and support
+
+If you get stuck, open an issue describing the problem, include logs and commands you ran, and tag maintainers. Thank you for contributing!
+
+---
+
+This document was updated to give a clear, step-by-step onboarding flow for new developers: environment setup, local testing, publishing changes, and releases. If you'd like, I can also:
+
+- Add a small `DEVELOPER.md` with exact `uv` task examples and sample `gh` commands tailored to this repo.
+- Add a short checklist template for PRs to ensure consistent contributions.

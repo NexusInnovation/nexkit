@@ -31,7 +31,7 @@ Execute the following comprehensive commit workflow:
 4. **Fetch Work Item Details** 
    - **IF work item ID is found in branch name**:
      - Use `mcp_azure-devops_wit_get_work_item` with:
-       - Project: "ASQ New Application"  
+       - Current project
        - Work item ID from branch name
        - Include fields: title, description, work item type, state, acceptance criteria
      - Extract key context: purpose, requirements, acceptance criteria

@@ -20,6 +20,7 @@
 ## Table of Contents
 
 - [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
+- [🔧 Prerequisites](#-prerequisites)
 - [⚡ Get started](#-get-started)
 - [📽️ Video Overview](#️-video-overview)
 - [🤖 Supported AI Agents](#-supported-ai-agents)
@@ -27,7 +28,6 @@
 - [📚 Core philosophy](#-core-philosophy)
 - [🌟 Development phases](#-development-phases)
 - [🎯 Experimental goals](#-experimental-goals)
-- [🔧 Prerequisites](#-prerequisites)
 - [📖 Learn more](#-learn-more)
 - [📋 Detailed process](#-detailed-process)
 - [🔍 Troubleshooting](#-troubleshooting)
@@ -39,6 +39,62 @@
 ## 🤔 What is Spec-Driven Development?
 
 Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
+
+## 🔧 Prerequisites
+
+Before installing Nexkit, ensure you have the following prerequisites installed:
+
+### Required
+
+1. **[uv](https://docs.astral.sh/uv/)** - Fast Python package and project manager (required for installing Nexkit)
+
+   Install `uv` using one of these methods:
+
+   **macOS/Linux:**
+
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+   **Windows:**
+
+   ```powershell
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+   ```
+
+   **Using pip:**
+
+   ```bash
+   pip install uv
+   ```
+
+   **Using pipx:**
+
+   ```bash
+   pipx install uv
+   ```
+
+2. **[Python 3.11+](https://www.python.org/downloads/)** - Python runtime (uv can also install Python for you)
+
+3. **[Git](https://git-scm.com/downloads)** - Version control system
+
+4. **AI coding agent** - Choose one of:
+   - [Claude Code](https://www.anthropic.com/claude-code)
+   - [GitHub Copilot](https://code.visualstudio.com/)
+   - [Gemini CLI](https://github.com/google-gemini/gemini-cli)
+   - [Cursor](https://cursor.sh/)
+   - [Qwen CLI](https://github.com/QwenLM/qwen-code)
+   - [opencode](https://opencode.ai/)
+   - [Codex CLI](https://github.com/openai/codex)
+   - [Windsurf](https://windsurf.com/)
+   - [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/)
+
+### Platform Support
+
+- **Linux/macOS** - Fully supported
+- **Windows** - Use PowerShell or WSL2
+
+If you encounter issues with an agent, please open an issue so we can refine the integration.
 
 ## ⚡ Get started
 
@@ -285,16 +341,6 @@ Our research and experimentation focus on:
 - Validate the concept of parallel implementation exploration
 - Provide robust iterative feature development workflows
 - Extend processes to handle upgrades and modernization tasks
-
-## 🔧 Prerequisites
-
-- **Linux/macOS** (or WSL2 on Windows)
-- AI coding agent: [Claude Code](https://www.anthropic.com/claude-code), [GitHub Copilot](https://code.visualstudio.com/), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Cursor](https://cursor.sh/), [Qwen CLI](https://github.com/QwenLM/qwen-code), [opencode](https://opencode.ai/), [Codex CLI](https://github.com/openai/codex), [Windsurf](https://windsurf.com/), or [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/)
-- [uv](https://docs.astral.sh/uv/) for package management
-- [Python 3.11+](https://www.python.org/downloads/)
-- [Git](https://git-scm.com/downloads)
-
-If you encounter issues with an agent, please open an issue so we can refine the integration.
 
 ## 📖 Learn more
 

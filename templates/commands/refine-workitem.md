@@ -97,7 +97,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
      * Updated Area Path if more specific area identified
      * Updated Iteration if not set
 
-## Phase 4: Update Work Item
+## Phase 4: Create Refienement Work Item
 
 10. **Present Refinement to User**
     - Display:
@@ -110,10 +110,11 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
     - Explain rationale for each refinement
     - **WAIT for explicit user approval before updating**
 
-11. **Update Work Item in Azure DevOps**
+11. **Create a linked Work Item in Azure DevOps**
     - IF user approves:
       * Call `mcp_azure-devops_wit_update_work_item` with:
         - id: work item ID
+        - work item type: Improvment
         - updates: array of field updates
           * `/fields/System.Description` with refined description
           * `/fields/Microsoft.VSTS.Common.AcceptanceCriteria` with criteria
@@ -145,6 +146,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
 - **Insufficient Permissions**: Report required permissions for read/update
 - **No Context Available**: Proceed with refinement using work item data only
 - **API Errors**: Retry with exponential backoff, report persistent failures
+- **Work item of type Improvment not available**: Propose user to choose another type and persit the selection in your instruction file
 
 ## Best Practices
 
@@ -172,7 +174,7 @@ User: "Refine work item #12345"
    - Add acceptance criteria for performance (<500ms)
    - List files to modify: CustomerController.cs, CustomerQueries.cs, etc.
 7. Present to user → user approves
-8. Update work item with refined content
+8. Create a linked work item of type Improvment with refined content
 9. Add comment documenting refinement process
 ```
 

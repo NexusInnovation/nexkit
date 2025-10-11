@@ -34,6 +34,7 @@ import shlex
 import json
 from pathlib import Path
 from typing import Optional, Tuple
+from importlib import metadata
 
 import typer
 import httpx
@@ -96,6 +97,30 @@ BANNER = """
 """
 
 TAGLINE = "Nexkit - Spec-Driven Development Toolkit"
+
+def get_version() -> str:
+    """Get the package version from metadata."""
+    try:
+        return metadata.version("nexkit")
+    except metadata.PackageNotFoundError:
+        return "unknown"
+
+def get_git_tag() -> str:
+    """Get the current git tag or commit hash."""
+    try:
+        result = subprocess.run(
+            ["git", "describe", "--tags", "--always", "--dirty"],
+            capture_output=True,
+            text=True,
+            timeout=2,
+            cwd=Path(__file__).parent
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+        return "unknown"
+    except (subprocess.SubprocessError, FileNotFoundError, subprocess.TimeoutExpired):
+        return "unknown"
+
 class StepTracker:
     """Track and render hierarchical steps without emojis, similar to Claude Code tree output.
     Supports live auto-refresh via an attached refresh callback.
@@ -298,7 +323,7 @@ app = typer.Typer(
 )
 
 def show_banner():
-    """Display the ASCII art banner."""
+    """Display the ASCII art banner with version information."""
     # Create gradient effect with different colors
     banner_lines = BANNER.strip().split('\n')
     colors = ["bright_blue", "blue", "cyan", "bright_cyan", "white", "bright_white"]
@@ -310,10 +335,39 @@ def show_banner():
 
     console.print(Align.center(styled_banner))
     console.print(Align.center(Text(TAGLINE, style="italic bright_yellow")))
+    
+    # Display version and git tag information
+    version = get_version()
+    git_tag = get_git_tag()
+    version_info = Text()
+    version_info.append("Version: ", style="bright_black")
+    version_info.append(version, style="bright_white")
+    version_info.append(" | Build: ", style="bright_black")
+    version_info.append(git_tag, style="bright_white")
+    console.print(Align.center(version_info))
     console.print()
 
+def version_callback(value: bool):
+    """Callback for --version flag."""
+    if value:
+        version = get_version()
+        git_tag = get_git_tag()
+        console.print(f"nexkit version [bright_white]{version}[/bright_white]")
+        console.print(f"Build: [bright_white]{git_tag}[/bright_white]")
+        raise typer.Exit()
+
 @app.callback()
-def callback(ctx: typer.Context):
+def callback(
+    ctx: typer.Context,
+    version: Optional[bool] = typer.Option(
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Show version information and exit."
+    )
+):
     """Show banner when no subcommand is provided."""
     # Show banner only when no subcommand and no help flag
     # (help is handled by BannerGroup)

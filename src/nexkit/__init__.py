@@ -47,6 +47,9 @@ from rich.table import Table
 from rich.tree import Tree
 from typer.core import TyperGroup
 
+# Nexkit modules
+from . import gitignore
+
 # For cross-platform keyboard input
 import readchar
 import ssl
@@ -1109,13 +1112,16 @@ def init(
             ensure_executable_scripts(project_path, tracker=tracker)
 
             # Git step
+            git_repo_exists = False
             if not no_git:
                 tracker.start("git")
                 if is_git_repo(project_path):
                     tracker.complete("git", "existing repo detected")
+                    git_repo_exists = True
                 elif should_init_git:
                     if init_git_repo(project_path, quiet=True):
                         tracker.complete("git", "initialized")
+                        git_repo_exists = True
                     else:
                         tracker.error("git", "init failed")
                 else:
@@ -1146,6 +1152,25 @@ def init(
     # Final static tree (ensures finished state visible after Live context ends)
     console.print(tracker.render())
     console.print("\n[bold green]Project ready.[/bold green]")
+
+    # Git exclusion prompt (if git repository was initialized/exists)
+    if git_repo_exists:
+        console.print()
+        if typer.confirm("Would you like to exclude nexkit files from git version control?", default=False):
+            try:
+                result = gitignore.add_nexkit_exclusions(project_path)
+                console.print(f"[green]✓[/green] Added nexkit exclusions to [cyan]{result.gitignore_path.name}[/cyan]")
+                
+                # Show cleanup guidance if there are tracked files
+                if result.tracked_files:
+                    from rich.markup import escape
+                    console.print(gitignore.format_cleanup_guidance(result.tracked_files, result.git_root))
+            except gitignore.NotGitRepositoryError:
+                console.print("[yellow]Warning:[/yellow] Not a git repository")
+            except gitignore.GitNotInstalledError:
+                console.print("[yellow]Warning:[/yellow] Git is not installed")
+            except Exception as e:
+                console.print(f"[red]Error:[/red] Failed to add exclusions: {e}")
 
     # Agent folder security notice
     agent_folder_map = {
@@ -1323,6 +1348,109 @@ def check():
         console.print("[dim]Tip: Install an AI assistant for the best experience[/dim]")
     if missing_mcp and not all(mcp_results.values()):
         console.print("[dim]Tip: MCP servers provide enhanced AI capabilities[/dim]")
+
+@app.command(name="add-exclusion")
+def add_exclusion(
+    path: Path = typer.Argument(Path.cwd(), help="Path to repository (defaults to current directory)")
+):
+    """
+    Add nexkit exclusion patterns to .gitignore file.
+    
+    This command adds the following patterns to your repository's .gitignore:
+    - .specify/
+    - specs/
+    - .github/prompts/nexkit.*
+    
+    The patterns are added in a clearly marked section that can be managed
+    independently of other .gitignore entries.
+    
+    Examples:
+        nexkit add-exclusion
+        nexkit add-exclusion /path/to/repo
+    """
+    show_banner()
+    
+    console.print("[cyan]Adding nexkit exclusions to .gitignore...[/cyan]\n")
+    
+    try:
+        result = gitignore.add_nexkit_exclusions(path)
+        
+        if result.already_configured:
+            console.print("[yellow]ℹ[/yellow] Nexkit exclusions are already configured")
+            console.print(f"[dim]Location:[/dim] {result.gitignore_path}")
+        else:
+            console.print("[green]✓[/green] Successfully added nexkit exclusions")
+            console.print(f"[dim]Location:[/dim] {result.gitignore_path}")
+            console.print(f"[dim]Patterns:[/dim] {', '.join(result.patterns_affected)}")
+        
+        # Show cleanup guidance if there are tracked files
+        if result.tracked_files:
+            from rich.markup import escape
+            console.print(gitignore.format_cleanup_guidance(result.tracked_files, result.git_root))
+        else:
+            console.print("\n[green]✓[/green] No nexkit files are currently tracked by git")
+            
+    except gitignore.NotGitRepositoryError:
+        console.print("[red]Error:[/red] Not a git repository")
+        console.print("[dim]Initialize git first with:[/dim] git init")
+        raise typer.Exit(1)
+    except gitignore.GitNotInstalledError:
+        console.print("[red]Error:[/red] Git is not installed or not in PATH")
+        console.print("[dim]Install from:[/dim] https://git-scm.com/downloads")
+        raise typer.Exit(1)
+    except PermissionError as e:
+        console.print(f"[red]Error:[/red] Permission denied: {e}")
+        console.print("[dim]Check file permissions for .gitignore[/dim]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1)
+
+@app.command(name="remove-exclusion")
+def remove_exclusion(
+    path: Path = typer.Argument(Path.cwd(), help="Path to repository (defaults to current directory)")
+):
+    """
+    Remove nexkit exclusion patterns from .gitignore file.
+    
+    This command removes the nexkit exclusion section from your repository's
+    .gitignore file. Previously tracked files will not be automatically
+    re-tracked; you must stage them manually if desired.
+    
+    Examples:
+        nexkit remove-exclusion
+        nexkit remove-exclusion /path/to/repo
+    """
+    show_banner()
+    
+    console.print("[cyan]Removing nexkit exclusions from .gitignore...[/cyan]\n")
+    
+    try:
+        result = gitignore.remove_nexkit_exclusions(path)
+        
+        if not result.gitignore_path.exists():
+            console.print("[yellow]ℹ[/yellow] No .gitignore file found")
+        elif not result.patterns_affected:
+            console.print("[yellow]ℹ[/yellow] Nexkit exclusions not found in .gitignore")
+            console.print(f"[dim]Location:[/dim] {result.gitignore_path}")
+        else:
+            console.print("[green]✓[/green] Successfully removed nexkit exclusions")
+            console.print(f"[dim]Location:[/dim] {result.gitignore_path}")
+            console.print(f"[dim]Patterns removed:[/dim] {', '.join(result.patterns_affected)}")
+            console.print("\n[cyan]Note:[/cyan] Previously excluded files are not automatically re-tracked")
+            console.print("[dim]To track files again, stage them with:[/dim] git add <file>")
+            
+    except gitignore.NotGitRepositoryError:
+        console.print("[red]Error:[/red] Not a git repository")
+        console.print("[dim]Initialize git first with:[/dim] git init")
+        raise typer.Exit(1)
+    except PermissionError as e:
+        console.print(f"[red]Error:[/red] Permission denied: {e}")
+        console.print("[dim]Check file permissions for .gitignore[/dim]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1)
 
 def main():
     app()

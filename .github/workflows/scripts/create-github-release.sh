@@ -21,6 +21,15 @@ if [[ "${FORCE_RELEASE:-false}" == "true" ]]; then
   git tag -l "$VERSION" >/dev/null 2>&1 && git push origin --delete "$VERSION" || true
 fi
 
+# Check if tag exists, if not create it
+if ! git rev-parse "$VERSION" >/dev/null 2>&1; then
+  echo "Creating tag $VERSION" >&2
+  git tag "$VERSION"
+  git push origin "$VERSION"
+else
+  echo "Tag $VERSION already exists" >&2
+fi
+
 gh release create "$VERSION" \
   .genreleases/nexkit-template-copilot-sh-"$VERSION".zip \
   .genreleases/nexkit-template-copilot-ps-"$VERSION".zip \

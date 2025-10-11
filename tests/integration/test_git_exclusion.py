@@ -281,4 +281,5 @@ def test_commands_show_banner(temp_repo, monkeypatch):
     result = runner.invoke(app, ["add-exclusion"])
     
     # Banner should be displayed
-    assert "NEXKIT" in result.stdout or "Nexkit" in result.stdout
+    expected_banner = "=== NEXKIT CLI ==="
+    assert expected_banner in result.stdout

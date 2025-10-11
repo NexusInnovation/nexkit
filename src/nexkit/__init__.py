@@ -1112,16 +1112,16 @@ def init(
             ensure_executable_scripts(project_path, tracker=tracker)
 
             # Git step
-            git_repo_exists = False
+            git_initialized = False
             if not no_git:
                 tracker.start("git")
                 if is_git_repo(project_path):
                     tracker.complete("git", "existing repo detected")
-                    git_repo_exists = True
+                    git_initialized = True
                 elif should_init_git:
                     if init_git_repo(project_path, quiet=True):
                         tracker.complete("git", "initialized")
-                        git_repo_exists = True
+                        git_initialized = True
                     else:
                         tracker.error("git", "init failed")
                 else:
@@ -1154,7 +1154,7 @@ def init(
     console.print("\n[bold green]Project ready.[/bold green]")
 
     # Git exclusion prompt (if git repository was initialized/exists)
-    if git_repo_exists:
+    if git_initialized:
         console.print()
         if typer.confirm("Would you like to exclude nexkit files from git version control?", default=False):
             try:

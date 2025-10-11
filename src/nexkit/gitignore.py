@@ -265,7 +265,7 @@ def add_nexkit_exclusions(repo_path: Path) -> ExclusionResult:
     new_content = existing_content + nexkit_section
     
     # Atomic write using temporary file
-    temp_file = gitignore_path.with_suffix(".gitignore.tmp")
+    temp_file = gitignore_path.with_name(gitignore_path.name + '.tmp')
     try:
         temp_file.write_text(new_content, encoding="utf-8")
         temp_file.replace(gitignore_path)  # Atomic on POSIX and Windows
@@ -486,7 +486,7 @@ def format_cleanup_guidance(tracked_files: List[Path], git_root: Path) -> str:
         "[cyan]To remove these files from git tracking:[/cyan]",
         "",
         "  1. Run this command to untrack files (keeps local copies):",
-        "     [white]git rm --cached -r .specify/ specs/ .github/prompts/nexkit.*[/white]",
+        f"     [white]git rm --cached {' '.join(str(f) for f in tracked_files)}[/white]",
         "",
         "  2. Commit the change:",
         "     [white]git commit -m \"Stop tracking nexkit files\"[/white]",

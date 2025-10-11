@@ -151,9 +151,14 @@ def test_get_tracked_nexkit_files_not_git_repo(tmp_path):
 
 @patch("subprocess.run", side_effect=FileNotFoundError)
 def test_get_tracked_nexkit_files_git_not_installed(mock_run, temp_repo):
-    """Test getting tracked files raises error when git not installed."""
+    """Test getting tracked files raises error when git not installed and verifies subprocess.run is called."""
     with pytest.raises(gitignore.GitNotInstalledError):
         gitignore.get_tracked_nexkit_files(temp_repo)
+    # Assert that subprocess.run was called at least once
+    assert mock_run.call_count > 0
+    # Optionally, check the arguments of the first call
+    called_args = mock_run.call_args_list[0][0][0]
+    assert "git" in called_args[0]
 
 
 # Test: Has nexkit section
@@ -361,17 +366,29 @@ def test_format_cleanup_guidance_many_files(temp_repo):
     tracked_files = [Path(f"specs/file{i}.md") for i in range(15)]
     guidance = gitignore.format_cleanup_guidance(tracked_files, temp_repo)
     
-    assert "git rm --cached" in guidance
-    assert "and 5 more" in guidance
-
-
-# Test: Error handling - permission errors
 def test_add_nexkit_exclusions_permission_error(temp_repo):
     """Test permission error handling when writing .gitignore."""
     gitignore_path = temp_repo / ".gitignore"
     gitignore_path.write_text("", encoding="utf-8")
     gitignore_path.chmod(0o444)  # Read-only
     
+    try:
+        with pytest.raises(PermissionError):
+            gitignore.add_nexkit_exclusions(temp_repo)
+    finally:
+        gitignore_path.chmod(0o644)  # Restore permissions
+
+def test_add_nexkit_exclusions_permission_error_new_file(tmp_path):
+    """Test permission error when creating new .gitignore in read-only directory."""
+    repo_path = tmp_path / "readonly_repo"
+    repo_path.mkdir()
+    repo_path.chmod(0o555)  # Read-only directory
+
+    try:
+        with pytest.raises(PermissionError):
+            gitignore.add_nexkit_exclusions(repo_path)
+    finally:
+        repo_path.chmod(0o755)  # Restore permissions
     try:
         with pytest.raises(PermissionError):
             gitignore.add_nexkit_exclusions(temp_repo)

@@ -28,14 +28,34 @@ The issue was that **tags were being created implicitly** by `gh release create`
 
 ## Solution
 
-Modified `.github/workflows/scripts/create-github-release.sh` to:
+### Fix 1: Use `git tag` Instead of `git describe`
 
-1. **Explicitly check if the tag exists** before creating the release
-2. **Create the tag manually** if it doesn't exist
-3. **Push the tag to the remote** before creating the release
-4. This ensures `gh release create` uses the existing tag
+Modified `.github/workflows/scripts/get-next-version.sh` to use `git tag -l --sort=-v:refname` which:
+- Lists **all** tags regardless of commit ancestry
+- Sorts by version number (handles v0.0.10 > v0.0.9 correctly)
+- Always finds the truly latest tag
 
-### Code Changes
+```bash
+# Get the latest tag using version sort
+LATEST_TAG=$(git tag -l --sort=-v:refname | head -n 1)
+if [ -z "$LATEST_TAG" ]; then
+  LATEST_TAG="v0.0.0"
+fi
+```
+
+### Fix 2: Explicit Tag Fetching
+
+Added explicit tag fetch step in `.github/workflows/release.yml`:
+
+```yaml
+- name: Fetch all tags
+  run: |
+    git fetch --tags --force
+```
+
+### Fix 3: Explicit Tag Creation
+
+Modified `.github/workflows/scripts/create-github-release.sh` to create tags before release:
 
 ```bash
 # Check if tag exists, if not create it
@@ -53,21 +73,25 @@ gh release create "$VERSION" \
 
 ## Expected Behavior After Fix
 
-1. **Normal push to `main`**:
-   - Workflow calculates next version
-   - Creates tag explicitly
-   - Creates release with that tag
+1. **Normal push to `main`** (with v0.0.9 as latest tag):
+   - Workflow explicitly fetches all tags
+   - `get-next-version.sh` finds v0.0.9 (latest by version sort)
+   - Calculates next version: v0.0.10
+   - Checks if release v0.0.10 exists (it doesn't)
+   - Creates tag v0.0.10 and pushes it
+   - Creates release v0.0.10
    - ✅ Release created successfully
 
 2. **Manual tag push**:
-   - Tag exists in repository
-   - Workflow detects existing tag
-   - Creates release with existing tag
-   - ✅ No duplicate releases
+   - If you manually push tag v0.0.11
+   - Next workflow run finds v0.0.11 as latest
+   - Calculates v0.0.12 as next version
+   - Creates release v0.0.12
+   - ✅ No duplicate releases, proper increment
 
 3. **Subsequent pushes**:
-   - Workflow increments from latest tag
-   - Creates new tag and release
+   - Each push increments from the actual latest tag
+   - No skipped releases due to tag ancestry issues
    - ✅ Version increments correctly
 
 ## Testing the Fix

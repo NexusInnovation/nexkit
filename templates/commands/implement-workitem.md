@@ -13,6 +13,7 @@ Given the change description provided as an $ARGUMENTS, execute the following co
    - Call `mcp_azure-devops_wit_get_work_item` with the work item ID and current project
    - Extract: id, title, description, work item type, state, assigned to, acceptance criteria, area path, iteration path
    - Look for attached file to get more information about implementation details.
+   - Read all child and related work items and related work items to gather more context about the change request.
 2. **Create or use existing feature branch**
    - If the current branch is not the feature branch then 
       Run the script `.specify/scripts/powershell/create-new-feature.ps1 -Json -WorkItemId "$ARGUMENTS"` from repo root and parse its JSON output for BRANCH_NAME. All file paths must be absolute.

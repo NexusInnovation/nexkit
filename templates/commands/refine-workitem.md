@@ -97,7 +97,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
      * Updated Area Path if more specific area identified
      * Updated Iteration if not set
 
-## Phase 4: Update Work Item
+## Phase 4: Create Refienement Work Item
 
 10. **Present Refinement to User**
     - Display:
@@ -147,6 +147,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
 - **Insufficient Permissions**: Report required permissions for read/update
 - **No Context Available**: Proceed with refinement using work item data only
 - **API Errors**: Retry with exponential backoff, report persistent failures
+- **Work item of type Improvment not available**: Propose user to choose another type and persit the selection in your instruction file
 
 ## Best Practices
 

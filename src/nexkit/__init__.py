@@ -1391,7 +1391,7 @@ def check():
         if not installation_success:
             console.print(f"\n[yellow]Some MCP servers could not be installed automatically.[/yellow]")
             console.print("[dim]You can install them manually using:[/dim]")
-            for package, description in missing_mcp:
+            for package, _, description, _ in missing_mcp:
                 console.print(f"  npm install -g {package}")
 
     console.print("\n[bold green]Nexkit CLI is ready to use![/bold green]")

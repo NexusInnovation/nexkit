@@ -1,6 +1,6 @@
 [project]
 name = "nexkit"
-version = "1.0.2"
+version = "1.0.3"
 description = "Nexkit CLI - A tool to bootstrap your projects for Spec-Driven Development (SDD)."
 requires-python = ">=3.11"
 dependencies = [

@@ -1277,27 +1277,22 @@ def init(
 
     steps_lines.append(f"{step_num}. Start using slash commands with your AI agent:")
 
-    steps_lines.append("   2.1 [cyan]/nexkit.constitution[/] - Establish project principles")
-    steps_lines.append("   2.2 [cyan]/nexkit.specify[/] - Create baseline specification")
-    steps_lines.append("   2.3 [cyan]/nexkit.plan[/] - Create implementation plan")
-    steps_lines.append("   2.4 [cyan]/nexkit.tasks[/] - Generate actionable tasks")
-    steps_lines.append("   2.5 [cyan]/nexkit.implement[/] - Execute implementation")
+    steps_lines.append("   - [cyan]/nexkit.implement[/] - Execute implementation workflow")
+    steps_lines.append("   - [cyan]/nexkit.commit[/] - Generate commit messages with work item context")
+    steps_lines.append("   - [cyan]/nexkit.implement-workitem[/] - Quick implementation using Azure DevOps work items")
+    steps_lines.append("   - [cyan]/nexkit.refine-workitem[/] - Add refinement context to user stories")
 
     steps_panel = Panel("\n".join(steps_lines), title="Next Steps", border_style="cyan", padding=(1,2))
     console.print()
     console.print(steps_panel)
 
     enhancement_lines = [
-        "Optional commands that you can use for your specs [bright_black](improve quality & confidence)[/bright_black]",
+        "Work with your AI agent to describe what you want to build.",
+        "The agent will guide you through the development process using the available slash commands.",
         "",
-        f"○ [cyan]/nexkit.clarify[/] [bright_black](optional)[/bright_black] - Ask structured questions to de-risk ambiguous areas before planning (run before [cyan]/nexkit.plan[/] if used)",
-        f"○ [cyan]/nexkit.analyze[/] [bright_black](optional)[/bright_black] - Cross-artifact consistency & alignment report (after [cyan]/nexkit.tasks[/], before [cyan]/nexkit.implement[/])",
-        f"○ [cyan]/nexkit.checklist[/] [bright_black](optional)[/bright_black] - Generate quality checklists to validate requirements completeness, clarity, and consistency (after [cyan]/nexkit.plan[/])",
-        f"○ [cyan]/nexkit.commit[/] [bright_black](optional)[/bright_black] - Generate intelligent commit messages and commit staged code with work item context",
-        f"○ [cyan]/nexkit.implement-workitem[/] [bright_black](optional)[/bright_black] - Quick implementation workflow using Azure DevOps work item information",
-        f"○ [cyan]/nexkit.refine-workitem[/] [bright_black](optional)[/bright_black] - Add refinement context to existing user stories via related improvement work items"
+        "For detailed guidance, see: [cyan]https://nexusinnovation.github.io/nexkit/[/cyan]"
     ]
-    enhancements_panel = Panel("\n".join(enhancement_lines), title="Enhancement Commands", border_style="cyan", padding=(1,2))
+    enhancements_panel = Panel("\n".join(enhancement_lines), title="Getting Started", border_style="cyan", padding=(1,2))
     console.print()
     console.print(enhancements_panel)
 

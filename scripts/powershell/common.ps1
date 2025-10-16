@@ -72,16 +72,17 @@ function Test-FeatureBranch {
         [string]$Branch,
         [bool]$HasGit = $true
     )
-    
+
     # For non-git repos, we can't enforce branch naming but still provide output
     if (-not $HasGit) {
         Write-Warning "[nexkit] Warning: Git repository not detected; skipped branch validation"
         return $true
     }
-    
-    if ($Branch -notmatch '^[0-9]{3}-') {
+
+    # Branch should match feature/###-name or just ###-name (for backwards compatibility)
+    if ($Branch -notmatch '^(feature/)?[0-9]{3}-') {
         Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
-        Write-Output "Feature branches should be named like: 001-feature-name"
+        Write-Output "Feature branches should be named like: feature/001-feature-name"
         return $false
     }
     return $true
@@ -89,7 +90,9 @@ function Test-FeatureBranch {
 
 function Get-FeatureDir {
     param([string]$RepoRoot, [string]$Branch)
-    Join-Path $RepoRoot "specs/$Branch"
+    # Strip feature/ prefix if present to get the spec folder name
+    $specFolder = $Branch -replace '^feature/', ''
+    Join-Path $RepoRoot "specs/$specFolder"
 }
 
 function Get-FeaturePathsEnv {

@@ -1,0 +1,16 @@
+[
+  {
+    "session_id": "a7f52b29-eb4d-4e4a-8fc2-6666a3345e9e",
+    "transcript_path": "/home/decarufe/.claude/projects/-mnt-c-git-nexkit/a7f52b29-eb4d-4e4a-8fc2-6666a3345e9e.jsonl",
+    "cwd": "/mnt/c/git/nexkit",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
+  },
+  {
+    "session_id": "a7f52b29-eb4d-4e4a-8fc2-6666a3345e9e",
+    "transcript_path": "/home/decarufe/.claude/projects/-mnt-c-git-nexkit/a7f52b29-eb4d-4e4a-8fc2-6666a3345e9e.jsonl",
+    "cwd": "/mnt/c/git/nexkit",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
+  }
+]

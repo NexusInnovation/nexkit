@@ -132,47 +132,11 @@ uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <PROJEC
 - Better tool management with `uv tool list`, `uv tool upgrade`, `uv tool uninstall`
 - Cleaner shell configuration
 
-### 2. Establish project principles
+### 2. Start building
 
-Use the **`/nexkit.constitution`** command to create your project's governing principles and development guidelines that will guide all subsequent development.
+After initializing your project with `nexkit init`, your AI coding agent will have access to custom prompts and workflows that help structure your development process. Simply describe what you want to build, and your agent will guide you through creating specifications, implementation plans, and working code.
 
-```bash
-/nexkit.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
-```
-
-### 3. Create the spec
-
-Use the **`/nexkit.specify`** command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
-
-```bash
-/nexkit.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
-```
-
-### 4. Create a technical implementation plan
-
-Use the **`/nexkit.plan`** command to provide your tech stack and architecture choices.
-
-```bash
-/nexkit.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
-```
-
-### 5. Break down into tasks
-
-Use **`/nexkit.tasks`** to create an actionable task list from your implementation plan.
-
-```bash
-/nexkit.tasks
-```
-
-### 6. Execute implementation
-
-Use **`/nexkit.implement`** to execute all tasks and build your feature according to the plan.
-
-```bash
-/nexkit.implement
-```
-
-For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
+For detailed step-by-step instructions and best practices, see our [comprehensive guide](./spec-driven.md).
 
 ## 📽️ Video Overview
 
@@ -268,27 +232,8 @@ nexkit check
 
 After running `nexkit init`, your AI coding agent will have access to these slash commands for structured development:
 
-#### Core Commands
-
-Essential commands for the Spec-Driven Development workflow:
-
-| Command                  | Description                                                           |
-|--------------------------|-----------------------------------------------------------------------|
-| `/nexkit.constitution`  | Create or update project governing principles and development guidelines |
-| `/nexkit.specify`       | Define what you want to build (requirements and user stories)        |
-| `/nexkit.plan`          | Create technical implementation plans with your chosen tech stack     |
-| `/nexkit.tasks`         | Generate actionable task lists for implementation                     |
-| `/nexkit.implement`     | Execute all tasks to build the feature according to the plan         |
-
-#### Optional Commands
-
-Additional commands for enhanced quality and validation:
-
 | Command                     | Description                                                           |
 |-----------------------------|-----------------------------------------------------------------------|
-| `/nexkit.clarify`          | Clarify underspecified areas (recommended before `/nexkit.plan`; formerly `/quizme`) |
-| `/nexkit.analyze`          | Cross-artifact consistency & coverage analysis (run after `/nexkit.tasks`, before `/nexkit.implement`) |
-| `/nexkit.checklist`        | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
 | `/nexkit.commit`           | Generate intelligent commit messages and commit staged code with work item context |
 | `/nexkit.implement-workitem` | Quick implementation workflow using Azure DevOps work item information |
 | `/nexkit.refine-workitem`  | Add refinement context to existing user stories via related improvement work items |
@@ -297,7 +242,7 @@ Additional commands for enhanced quality and validation:
 
 | Variable         | Description                                                                                    |
 |------------------|------------------------------------------------------------------------------------------------|
-| `NEXKIT_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches.<br/>**Must be set in the context of the agent you're working with prior to using `/nexkit.plan` or follow-up commands. |
+| `NEXKIT_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. Must be set in the context of the agent you're working with. |
 
 ## 📚 Core philosophy
 
@@ -408,22 +353,11 @@ Go to the project folder and run your AI agent. In our example, we're using `cla
 
 ![Bootstrapping Claude Code environment](./media/bootstrap-claude-code.gif)
 
-You will know that things are configured correctly if you see the `/nexkit.constitution`, `/nexkit.specify`, `/nexkit.plan`, `/nexkit.tasks`, and `/nexkit.implement` commands available.
+You will know that things are configured correctly if you can interact with your AI agent and access the custom prompts and workflows provided by Nexkit.
 
-The first step should be establishing your project's governing principles using the `/nexkit.constitution` command. This helps ensure consistent decision-making throughout all subsequent development phases:
+### **STEP 1:** Start building
 
-```text
-/nexkit.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements. Include governance for how these principles should guide technical decisions and implementation choices.
-```
-
-This step creates or updates the `.nexkit/memory/constitution.md` file with your project's foundational guidelines that the AI agent will reference during specification, planning, and implementation phases.
-
-### **STEP 2:** Create project specifications
-
-With your project principles established, you can now create the functional specifications. Use the `/nexkit.specify` command and then provide the concrete requirements for the project you want to develop.
-
->[!IMPORTANT]
->Be as explicit as possible about _what_ you are trying to build and _why_. **Do not focus on the tech stack at this point**.
+Describe what you want to build to your AI agent. Be as explicit as possible about _what_ you are trying to build and _why_.
 
 An example prompt:
 
@@ -473,139 +407,30 @@ At this stage, your project folder contents should resemble the following:
         └── tasks-template.md
 ```
 
-### **STEP 3:** Functional specification clarification (required before planning)
+### **STEP 3:** Refine and clarify requirements
 
-With the baseline specification created, you can go ahead and clarify any of the requirements that were not captured properly within the first shot attempt.
+With the baseline specification created, clarify any requirements that need more detail.
 
-You should run the structured clarification workflow **before** creating a technical plan to reduce rework downstream.
+Work iteratively with your AI agent to refine and clarify:
+- Discuss unclear or ambiguous requirements
+- Ask questions about edge cases and scenarios
+- Validate assumptions and constraints
+- Ensure all acceptance criteria are well-defined
 
-Preferred order:
-1. Use `/nexkit.clarify` (structured) – sequential, coverage-based questioning that records answers in a Clarifications section.
-2. Optionally follow up with ad-hoc free-form refinement if something still feels vague.
+It's important to use the interaction with your AI agent as an opportunity to clarify and ask questions - **do not treat its first attempt as final**. Work collaboratively to refine the solution.
 
-If you intentionally want to skip clarification (e.g., spike or exploratory prototype), explicitly state that so the agent doesn't block on missing clarifications.
+### **STEP 2:** Implementation
 
-Example free-form refinement prompt (after `/nexkit.clarify` if still needed):
-
-```text
-For each sample project or project that you create there should be a variable number of tasks between 5 and 15
-tasks for each one randomly distributed into different states of completion. Make sure that there's at least
-one task in each stage of completion.
-```
-
-You should also ask Claude Code to validate the **Review & Acceptance Checklist**, checking off the things that are validated/pass the requirements, and leave the ones that are not unchecked. The following prompt can be used:
-
-```text
-Read the review and acceptance checklist, and check off each item in the checklist if the feature spec meets the criteria. Leave it empty if it does not.
-```
-
-It's important to use the interaction with Claude Code as an opportunity to clarify and ask questions around the specification - **do not treat its first attempt as final**.
-
-### **STEP 4:** Generate a plan
-
-You can now be specific about the tech stack and other technical requirements. You can use the `/nexkit.plan` command that is built into the project template with a prompt like this:
-
-```text
-We are going to generate this using .NET Aspire, using Postgres as the database. The frontend should use
-Blazor server with drag-and-drop task boards, real-time updates. There should be a REST API created with a projects API,
-tasks API, and a notifications API.
-```
-
-The output of this step will include a number of implementation detail documents, with your directory tree resembling this:
-
-```text
-.
-├── CLAUDE.md
-├── memory
-│	 └── constitution.md
-├── scripts
-│	 ├── check-prerequisites.sh
-│	 ├── common.sh
-│	 ├── create-new-feature.sh
-│	 ├── setup-plan.sh
-│	 └── update-claude-md.sh
-├── specs
-│	 └── 001-create-taskify
-│	     ├── contracts
-│	     │	 ├── api-spec.json
-│	     │	 └── signalr-spec.md
-│	     ├── data-model.md
-│	     ├── plan.md
-│	     ├── quickstart.md
-│	     ├── research.md
-│	     └── spec.md
-└── templates
-    ├── CLAUDE-template.md
-    ├── plan-template.md
-    ├── spec-template.md
-    └── tasks-template.md
-```
-
-Check the `research.md` document to ensure that the right tech stack is used, based on your instructions. You can ask Claude Code to refine it if any of the components stand out, or even have it check the locally-installed version of the platform/framework you want to use (e.g., .NET).
-
-Additionally, you might want to ask Claude Code to research details about the chosen tech stack if it's something that is rapidly changing (e.g., .NET Aspire, JS frameworks), with a prompt like this:
-
-```text
-I want you to go through the implementation plan and implementation details, looking for areas that could
-benefit from additional research as .NET Aspire is a rapidly changing library. For those areas that you identify that
-require further research, I want you to update the research document with additional details about the specific
-versions that we are going to be using in this Taskify application and spawn parallel research tasks to clarify
-any details using research from the web.
-```
-
-During this process, you might find that Claude Code gets stuck researching the wrong thing - you can help nudge it in the right direction with a prompt like this:
-
-```text
-I think we need to break this down into a series of steps. First, identify a list of tasks
-that you would need to do during implementation that you're not sure of or would benefit
-from further research. Write down a list of those tasks. And then for each one of these tasks,
-I want you to spin up a separate research task so that the net results is we are researching
-all of those very specific tasks in parallel. What I saw you doing was it looks like you were
-researching .NET Aspire in general and I don't think that's gonna do much for us in this case.
-That's way too untargeted research. The research needs to help you solve a specific targeted question.
-```
-
->[!NOTE]
->Claude Code might be over-eager and add components that you did not ask for. Ask it to clarify the rationale and the source of the change.
-
-### **STEP 5:** Have Claude Code validate the plan
-
-With the plan in place, you should have Claude Code run through it to make sure that there are no missing pieces. You can use a prompt like this:
-
-```text
-Now I want you to go and audit the implementation plan and the implementation detail files.
-Read through it with an eye on determining whether or not there is a sequence of tasks that you need
-to be doing that are obvious from reading this. Because I don't know if there's enough here. For example,
-when I look at the core implementation, it would be useful to reference the appropriate places in the implementation
-details where it can find the information as it walks through each step in the core implementation or in the refinement.
-```
-
-This helps refine the implementation plan and helps you avoid potential blind spots that Claude Code missed in its planning cycle. Once the initial refinement pass is complete, ask Claude Code to go through the checklist once more before you can get to the implementation.
-
-You can also ask Claude Code (if you have the [GitHub CLI](https://docs.github.com/en/github-cli/github-cli) installed) to go ahead and create a pull request from your current branch to `main` with a detailed description, to make sure that the effort is properly tracked.
-
->[!NOTE]
->Before you have the agent implement it, it's also worth prompting Claude Code to cross-check the details to see if there are any over-engineered pieces (remember - it can be over-eager). If over-engineered components or decisions exist, you can ask Claude Code to resolve them. Ensure that Claude Code follows the [constitution](base/memory/constitution.md) as the foundational piece that it must adhere to when establishing the plan.
-
-### STEP 6: Implementation
-
-Once ready, use the `/nexkit.implement` command to execute your implementation plan:
-
-```text
-/nexkit.implement
-```
-
-The `/nexkit.implement` command will:
-- Validate that all prerequisites are in place (constitution, spec, plan, and tasks)
-- Parse the task breakdown from `tasks.md`
-- Execute tasks in the correct order, respecting dependencies and parallel execution markers
-- Follow the TDD approach defined in your task plan
-- Provide progress updates and handle errors appropriately
+Work with your AI agent to implement your feature. The agent will help you:
+- Write clean, maintainable code following project conventions
+- Create appropriate tests
+- Handle errors and edge cases
+- Follow best practices for your chosen technology stack
 
 >[!IMPORTANT]
->The AI agent will execute local CLI commands (such as `dotnet`, `npm`, etc.) - make sure you have the required tools installed on your machine.
+>The AI agent may execute local CLI commands (such as `dotnet`, `npm`, etc.) - make sure you have the required tools installed on your machine.
 
-Once the implementation is complete, test the application and resolve any runtime errors that may not be visible in CLI logs (e.g., browser console errors). You can copy and paste such errors back to your AI agent for resolution.
+Once the implementation is complete, test the application and resolve any runtime errors. You can share error messages with your AI agent for assistance.
 
 </details>
 

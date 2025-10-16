@@ -65,23 +65,30 @@ has_git() {
 check_feature_branch() {
     local branch="$1"
     local has_git_repo="$2"
-    
+
     # For non-git repos, we can't enforce branch naming but still provide output
     if [[ "$has_git_repo" != "true" ]]; then
         echo "[nexkit] Warning: Git repository not detected; skipped branch validation" >&2
         return 0
     fi
-    
-    if [[ ! "$branch" =~ ^[0-9]{3}- ]]; then
+
+    # Branch should match feature/###-name or just ###-name (for backwards compatibility)
+    if [[ ! "$branch" =~ ^(feature/)?[0-9]{3}- ]]; then
         echo "ERROR: Not on a feature branch. Current branch: $branch" >&2
-        echo "Feature branches should be named like: 001-feature-name" >&2
+        echo "Feature branches should be named like: feature/001-feature-name" >&2
         return 1
     fi
-    
+
     return 0
 }
 
-get_feature_dir() { echo "$1/specs/$2"; }
+get_feature_dir() {
+    local repo_root="$1"
+    local branch="$2"
+    # Strip feature/ prefix if present to get the spec folder name
+    local spec_folder="${branch#feature/}"
+    echo "$repo_root/specs/$spec_folder"
+}
 
 get_feature_paths() {
     local repo_root=$(get_repo_root)

@@ -70,41 +70,22 @@ Today, practicing SDD requires assembling existing tools and maintaining discipl
 
 The key is treating specifications as the source of truth, with code as the generated output that serves the specification rather than the other way around.
 
-## Streamlining SDD with Commands
+## Streamlining SDD with Your AI Agent
 
-The SDD methodology is significantly enhanced through three powerful commands that automate the specification → planning → tasking workflow:
+The SDD methodology is enhanced through collaborative work with AI coding assistants. Nexkit provides structure and commands to support this workflow:
 
-### The `/nexkit.specify` Command
+### Working with AI Agents
 
-This command transforms a simple feature description (the user-prompt) into a complete, structured specification with automatic repository management:
+After initializing a Nexkit project, work with your AI agent to:
 
-1. **Automatic Feature Numbering**: Scans existing specs to determine the next feature number (e.g., 001, 002, 003)
-2. **Branch Creation**: Generates a semantic branch name from your description and creates it automatically
-3. **Template-Based Generation**: Copies and customizes the feature specification template with your requirements
-4. **Directory Structure**: Creates the proper `specs/[branch-name]/` structure for all related documents
-
-### The `/nexkit.plan` Command
-
-Once a feature specification exists, this command creates a comprehensive implementation plan:
-
-1. **Specification Analysis**: Reads and understands the feature requirements, user stories, and acceptance criteria
-2. **Constitutional Compliance**: Ensures alignment with project constitution and architectural principles
-3. **Technical Translation**: Converts business requirements into technical architecture and implementation details
-4. **Detailed Documentation**: Generates supporting documents for data models, API contracts, and test scenarios
-5. **Quickstart Validation**: Produces a quickstart guide capturing key validation scenarios
-
-### The `/nexkit.tasks` Command
-
-After a plan is created, this command analyzes the plan and related design documents to generate an executable task list:
-
-1. **Inputs**: Reads `plan.md` (required) and, if present, `data-model.md`, `contracts/`, and `research.md`
-2. **Task Derivation**: Converts contracts, entities, and scenarios into specific tasks
-3. **Parallelization**: Marks independent tasks `[P]` and outlines safe parallel groups
-4. **Output**: Writes `tasks.md` in the feature directory, ready for execution by a Task agent
+1. **Develop Specifications**: Create feature descriptions, user stories, and acceptance criteria
+2. **Plan Implementation**: Define technical architecture, data models, and implementation approach
+3. **Break Down Work**: Identify tasks, dependencies, and validation scenarios
+4. **Execute Development**: Use `/nexkit.implement` to implement from specifications
 
 ### Example: Building a Chat Feature
 
-Here's how these commands transform the traditional development workflow:
+Here's how this workflow transforms traditional development:
 
 **Traditional Approach:**
 
@@ -117,36 +98,30 @@ Here's how these commands transform the traditional development workflow:
 Total: ~12 hours of documentation work
 ```
 
-**SDD with Commands Approach:**
+**SDD with AI Agent Approach:**
 
-```bash
-# Step 1: Create the feature specification (5 minutes)
-/nexkit.specify Real-time chat system with message history and user presence
+```text
+1. Discuss feature requirements with your AI agent
+   "I need a real-time chat system with message history and user presence"
 
-# This automatically:
-# - Creates branch "003-chat-system"
-# - Generates specs/003-chat-system/spec.md
-# - Populates it with structured requirements
+2. Refine specifications collaboratively
+   - WebSocket for real-time messaging
+   - PostgreSQL for message history
+   - Redis for presence tracking
 
-# Step 2: Generate implementation plan (5 minutes)
-/nexkit.plan WebSocket for real-time messaging, PostgreSQL for history, Redis for presence
+3. Review and validate the plan
+   - Data models
+   - API contracts
+   - Test scenarios
 
-# Step 3: Generate executable tasks (5 minutes)
-/nexkit.tasks
-
-# This automatically creates:
-# - specs/003-chat-system/plan.md
-# - specs/003-chat-system/research.md (WebSocket library comparisons)
-# - specs/003-chat-system/data-model.md (Message and User schemas)
-# - specs/003-chat-system/contracts/ (WebSocket events, REST endpoints)
-# - specs/003-chat-system/quickstart.md (Key validation scenarios)
-# - specs/003-chat-system/tasks.md (Task list derived from the plan)
+4. Execute implementation
+   /nexkit.implement specs/003-chat-system/plan.md
 ```
 
-In 15 minutes, you have:
+Through collaborative iteration with your AI agent, you can develop:
 
-- A complete feature specification with user stories and acceptance criteria
-- A detailed implementation plan with technology choices and rationale
+- Complete feature specifications with user stories and acceptance criteria
+- Detailed implementation plans with technology choices and rationale
 - API contracts and data models ready for code generation
 - Comprehensive test scenarios for both automated and manual testing
 - All documents properly versioned in a feature branch

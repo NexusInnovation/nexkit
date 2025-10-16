@@ -1,8 +1,5 @@
 ---
 description: Refine an Azure DevOps work item by gathering context from parent, siblings, and codebase to create detailed, actionable requirements.
-scripts:
-  sh: scripts/bash/check-prerequisites.sh --json
-  ps: scripts/powershell/check-prerequisites.ps1 -Json
 ---
 
 Given a work item ID or reference as $ARGUMENTS, execute the following work item refinement workflow:
@@ -11,7 +8,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
 
 1. **Parse Work Item Reference**
    - Extract work item ID from $ARGUMENTS (e.g., "12345", "#12345", "PBI 12345")
-   - Set PROJECT to current working project (or ask if unknown and write it somwhere to remember)
+   - Set PROJECT to current working project (or ask if unknown and write it somewhere to remember)
 
 2. **Fetch Primary Work Item**
    - Call `mcp_azure-devops_wit_get_work_item` with:
@@ -97,7 +94,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
      * Updated Area Path if more specific area identified
      * Updated Iteration if not set
 
-## Phase 4: Create Refienement Work Item
+## Phase 4: Create Refinement Work Item
 
 10. **Present Refinement to User**
     - Display:
@@ -147,7 +144,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
 - **Insufficient Permissions**: Report required permissions for read/update
 - **No Context Available**: Proceed with refinement using work item data only
 - **API Errors**: Retry with exponential backoff, report persistent failures
-- **Work item of type Improvment not available**: Propose user to choose another type and persit the selection in your instruction file
+- **Work item of type Improvement not available**: Propose user to choose another type and persist the selection in your instruction file
 
 ## Best Practices
 

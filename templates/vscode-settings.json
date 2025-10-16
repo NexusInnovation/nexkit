@@ -1,10 +1,8 @@
 {
     "chat.promptFilesRecommendations": {
-        "nexkit.constitution": true,
-        "nexkit.specify": true,
-        "nexkit.plan": true,
-        "nexkit.tasks": true,
-        "nexkit.implement": true
+        "nexkit.implement": true,
+        "nexkit.refine": true,
+        "nexkit.commit": true
     },
     "chat.tools.terminal.autoApprove": {
         ".nexkit/scripts/bash/": true,

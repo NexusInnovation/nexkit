@@ -1,11 +1,11 @@
 <div align="center">
-    <img src="./media/logo_small.webp"/>
-    <h1>🌱 NexKit</h1>
+    <img src="./media/nexus.png"/>
+    <h1>🛠️ NexKit 🪛</h1>
     <h3><em>Build high-quality software faster.</em></h3>
 </div>
 
 <p align="center">
-    <strong>An effort to allow organizations to focus on product scenarios rather than writing undifferentiated code with the help of Spec-Driven Development.</strong>
+    <strong>The Nexus Innovations toolkit to build solid application driven by AI.</strong>
 </p>
 
 <p align="center">
@@ -19,49 +19,43 @@
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
-- [🔧 Prerequisites](#-prerequisites)
+- [Prerequisites](#prerequisites)
   - [Required](#required)
   - [Platform Support](#platform-support)
-- [⚡ Get started](#-get-started)
-  - [1. Install Nexkit](#1-install-nexkit)
+- [Get started](#get-started)
+  - [Install Nexkit](#install-nexkit)
     - [Option 1: Persistent Installation (Recommended)](#option-1-persistent-installation-recommended)
     - [Option 2: One-time Usage](#option-2-one-time-usage)
-  - [2. Start building](#2-start-building)
-- [📽️ Video Overview](#️-video-overview)
-- [🤖 Supported AI Agents](#-supported-ai-agents)
-- [🔧 Nexkit CLI Reference](#-nexkit-cli-reference)
+  - [Start building](#start-building)
+- [Video Overview](#video-overview)
+- [Supported AI Agents](#supported-ai-agents)
+- [Nexkit CLI Reference](#nexkit-cli-reference)
   - [Commands](#commands)
-  - [`nexkit init` Arguments \& Options](#nexkit-init-arguments--options)
+  - [`nexkit init` Arguments & Options](#nexkit-init-arguments--options)
   - [Examples](#examples)
   - [Available Slash Commands](#available-slash-commands)
   - [Environment Variables](#environment-variables)
-- [📚 Core philosophy](#-core-philosophy)
-- [🌟 Development phases](#-development-phases)
-- [🎯 Experimental goals](#-experimental-goals)
+- [Core philosophy](#core-philosophy)
+- [Development phases](#development-phases)
+- [Experimental goals](#experimental-goals)
   - [Technology independence](#technology-independence)
   - [Enterprise constraints](#enterprise-constraints)
   - [User-centric development](#user-centric-development)
-  - [Creative \& iterative processes](#creative--iterative-processes)
-- [📖 Learn more](#-learn-more)
-- [📋 Detailed process](#-detailed-process)
-  - [**STEP 1:** Establish project principles](#step-1-establish-project-principles)
-  - [**STEP 1:** Start building](#step-1-start-building)
-  - [**STEP 3:** Refine and clarify requirements](#step-3-refine-and-clarify-requirements)
-  - [**STEP 2:** Implementation](#step-2-implementation)
-- [🔍 Troubleshooting](#-troubleshooting)
+  - [Creative & iterative processes](#creative--iterative-processes)
+- [Learn more](#learn-more)
+- [Detailed process](#detailed-process)
+  - [Establish project principles (STEP 1)](#establish-project-principles-step-1)
+  - [Start building (STEP 1)](#start-building-step-1)
+  - [Refine and clarify requirements (STEP 3)](#refine-and-clarify-requirements-step-3)
+  - [Implementation (STEP 2)](#implementation-step-2)
+- [Troubleshooting](#troubleshooting)
   - [Git Credential Manager on Linux](#git-credential-manager-on-linux)
-- [👥 Maintainers](#-maintainers)
-- [💬 Support](#-support)
-- [🙏 Acknowledgements](#-acknowledgements)
-- [📄 License](#-license)
+- [Maintainers](#maintainers)
+- [Support](#support)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
 
-## 🤔 What is Spec-Driven Development?
-
-Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
-
-## 🔧 Prerequisites
+## Prerequisites
 
 Before installing Nexkit, ensure you have the following prerequisites installed:
 
@@ -117,9 +111,9 @@ Before installing Nexkit, ensure you have the following prerequisites installed:
 
 If you encounter issues with an agent, please open an issue so we can refine the integration.
 
-## ⚡ Get started
+## Get started
 
-### 1. Install Nexkit
+### Install Nexkit
 
 Choose your preferred installation method:
 
@@ -153,19 +147,19 @@ uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <PROJEC
 - Better tool management with `uv tool list`, `uv tool upgrade`, `uv tool uninstall`
 - Cleaner shell configuration
 
-### 2. Start building
+### Start building
 
 After initializing your project with `nexkit init`, your AI coding agent will have access to custom prompts and workflows that help structure your development process. Simply describe what you want to build, and your agent will guide you through creating specifications, implementation plans, and working code.
 
 For detailed step-by-step instructions and best practices, see our [comprehensive guide](./spec-driven.md).
 
-## 📽️ Video Overview
+## Video Overview
 
 Want to see Nexkit in action? Watch our [video overview](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)!
 
 [![Nexkit video header](/media/spec-kit-video-header.jpg)](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)
 
-## 🤖 Supported AI Agents
+## Supported AI Agents
 
 | Agent                                                                                | Support | Notes                                                                                                                                     |
 | ------------------------------------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -182,7 +176,7 @@ Want to see Nexkit in action? Watch our [video overview](https://www.youtube.com
 | [Codex CLI](https://github.com/openai/codex)                                         | ✅       |                                                                                                                                           |
 | [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/) | ⚠️       | Amazon Q Developer CLI [does not support](https://github.com/aws/amazon-q-developer-cli/issues/3064) custom arguments for slash commands. |
 
-## 🔧 Nexkit CLI Reference
+## Nexkit CLI Reference
 
 The `nexkit` command supports the following options:
 
@@ -266,7 +260,7 @@ After running `nexkit init`, your AI coding agent will have access to these slas
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NEXKIT_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. Must be set in the context of the agent you're working with. |
 
-## 📚 Core philosophy
+## Core philosophy
 
 Spec-Driven Development is a structured process that emphasizes:
 
@@ -275,15 +269,34 @@ Spec-Driven Development is a structured process that emphasizes:
 - **Multi-step refinement** rather than one-shot code generation from prompts
 - **Heavy reliance** on advanced AI model capabilities for specification interpretation
 
-## 🌟 Development phases
+## Development phases
 
-| Phase                                    | Focus                    | Key Activities                                                                                                                                                     |
-| ---------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **0-to-1 Development** ("Greenfield")    | Generate from scratch    | <ul><li>Start with high-level requirements</li><li>Generate specifications</li><li>Plan implementation steps</li><li>Build production-ready applications</li></ul> |
-| **Creative Exploration**                 | Parallel implementations | <ul><li>Explore diverse solutions</li><li>Support multiple technology stacks & architectures</li><li>Experiment with UX patterns</li></ul>                         |
-| **Iterative Enhancement** ("Brownfield") | Brownfield modernization | <ul><li>Add features iteratively</li><li>Modernize legacy systems</li><li>Adapt processes</li></ul>                                                                |
+### 0-to-1 Development ("Greenfield")
 
-## 🎯 Experimental goals
+- Focus: Generate from scratch
+- Key activities:
+  - Start with high-level requirements
+  - Generate specifications
+  - Plan implementation steps
+  - Build production-ready applications
+
+### Creative Exploration
+
+- Focus: Parallel implementations
+- Key activities:
+  - Explore diverse solutions
+  - Support multiple technology stacks & architectures
+  - Experiment with UX patterns
+
+### Iterative Enhancement ("Brownfield")
+
+- Focus: Brownfield modernization
+- Key activities:
+  - Add features iteratively
+  - Modernize legacy systems
+  - Adapt processes
+
+## Experimental goals
 
 Our research and experimentation focus on:
 
@@ -309,14 +322,14 @@ Our research and experimentation focus on:
 - Provide robust iterative feature development workflows
 - Extend processes to handle upgrades and modernization tasks
 
-## 📖 Learn more
+## Learn more
 
 - **[Complete Spec-Driven Development Methodology](./spec-driven.md)** - Deep dive into the full process
-- **[Detailed Walkthrough](#-detailed-process)** - Step-by-step implementation guide
+- **[Detailed Walkthrough](#detailed-process)** - Step-by-step implementation guide
 
 ---
 
-## 📋 Detailed process
+## Detailed process
 
 <details>
 <summary>Click to expand the detailed step-by-step walkthrough</summary>
@@ -369,7 +382,7 @@ The CLI will check if you have Claude Code, Gemini CLI, Cursor CLI, Qwen CLI, op
 nexkit init <project_name> --ai claude --ignore-agent-tools
 ```
 
-### **STEP 1:** Establish project principles
+### Establish project principles (STEP 1)
 
 Go to the project folder and run your AI agent. In our example, we're using `claude`.
 
@@ -377,7 +390,7 @@ Go to the project folder and run your AI agent. In our example, we're using `cla
 
 You will know that things are configured correctly if you can interact with your AI agent and access the custom prompts and workflows provided by Nexkit.
 
-### **STEP 1:** Start building
+### Start building (STEP 1)
 
 Describe what you want to build to your AI agent. Be as explicit as possible about _what_ you are trying to build and _why_.
 
@@ -412,28 +425,29 @@ At this stage, your project folder contents should resemble the following:
 
 ```text
 └── .nexkit
-    ├── memory
-    │	 └── constitution.md
-    ├── scripts
-    │	 ├── check-prerequisites.sh
-    │	 ├── common.sh
-    │	 ├── create-new-feature.sh
-    │	 ├── setup-plan.sh
-    │	 └── update-claude-md.sh
-    ├── specs
-    │	 └── 001-create-taskify
-    │	     └── spec.md
-    └── templates
-        ├── plan-template.md
-        ├── spec-template.md
-        └── tasks-template.md
+  ├── memory
+  │    └── constitution.md
+  ├── scripts
+  │    ├── check-prerequisites.sh
+  │    ├── common.sh
+  │    ├── create-new-feature.sh
+  │    ├── setup-plan.sh
+  │    └── update-claude-md.sh
+  ├── specs
+  │    └── 001-create-taskify
+  │         └── spec.md
+  └── templates
+    ├── plan-template.md
+    ├── spec-template.md
+    └── tasks-template.md
 ```
 
-### **STEP 3:** Refine and clarify requirements
+### Refine and clarify requirements (STEP 3)
 
 With the baseline specification created, clarify any requirements that need more detail.
 
 Work iteratively with your AI agent to refine and clarify:
+
 - Discuss unclear or ambiguous requirements
 - Ask questions about edge cases and scenarios
 - Validate assumptions and constraints
@@ -441,9 +455,10 @@ Work iteratively with your AI agent to refine and clarify:
 
 It's important to use the interaction with your AI agent as an opportunity to clarify and ask questions - **do not treat its first attempt as final**. Work collaboratively to refine the solution.
 
-### **STEP 2:** Implementation
+### Implementation (STEP 2)
 
 Work with your AI agent to implement your feature. The agent will help you:
+
 - Write clean, maintainable code following project conventions
 - Create appropriate tests
 - Handle errors and edge cases
@@ -458,7 +473,7 @@ Once the implementation is complete, test the application and resolve any runtim
 
 ---
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Git Credential Manager on Linux
 
@@ -477,18 +492,18 @@ echo "Cleaning up..."
 rm gcm-linux_amd64.2.6.1.deb
 ```
 
-## 👥 Maintainers
+## Maintainers
 
 - Eric De Carufel ([@decarufe](https://github.com/decarufe))
 
-## 💬 Support
+## Support
 
 For support, please open a [GitHub issue](https://github.com/NexusInnovation/nexkit/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 This project is heavily influenced by and based on the work and research of [John Lam](https://github.com/jflam).
 
-## 📄 License
+## License
 
 This project is licensed under the terms of the MIT open source license. Please refer to the [LICENSE](./LICENSE) file for the full terms.

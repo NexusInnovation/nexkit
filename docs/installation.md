@@ -87,6 +87,7 @@ After initialization, you should see the following commands available in your AI
 - `/nexkit.commit` - Generate intelligent commit messages
 - `/nexkit.implement-workitem` - Quick implementation with Azure DevOps work items
 - `/nexkit.refine-workitem` - Add refinement to existing user stories
+- `/nexkit.review` - Perform detailed code review with best practices analysis
 
 The `.nexkit/scripts` directory will contain both `.sh` and `.ps1` scripts.
 

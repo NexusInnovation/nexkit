@@ -19,18 +19,39 @@
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
 - [🔧 Prerequisites](#-prerequisites)
+  - [Required](#required)
+  - [Platform Support](#platform-support)
 - [⚡ Get started](#-get-started)
+  - [1. Install Nexkit](#1-install-nexkit)
+    - [Option 1: Persistent Installation (Recommended)](#option-1-persistent-installation-recommended)
+    - [Option 2: One-time Usage](#option-2-one-time-usage)
+  - [2. Start building](#2-start-building)
 - [📽️ Video Overview](#️-video-overview)
 - [🤖 Supported AI Agents](#-supported-ai-agents)
 - [🔧 Nexkit CLI Reference](#-nexkit-cli-reference)
+  - [Commands](#commands)
+  - [`nexkit init` Arguments \& Options](#nexkit-init-arguments--options)
+  - [Examples](#examples)
+  - [Available Slash Commands](#available-slash-commands)
+  - [Environment Variables](#environment-variables)
 - [📚 Core philosophy](#-core-philosophy)
 - [🌟 Development phases](#-development-phases)
 - [🎯 Experimental goals](#-experimental-goals)
+  - [Technology independence](#technology-independence)
+  - [Enterprise constraints](#enterprise-constraints)
+  - [User-centric development](#user-centric-development)
+  - [Creative \& iterative processes](#creative--iterative-processes)
 - [📖 Learn more](#-learn-more)
 - [📋 Detailed process](#-detailed-process)
+  - [**STEP 1:** Establish project principles](#step-1-establish-project-principles)
+  - [**STEP 1:** Start building](#step-1-start-building)
+  - [**STEP 3:** Refine and clarify requirements](#step-3-refine-and-clarify-requirements)
+  - [**STEP 2:** Implementation](#step-2-implementation)
 - [🔍 Troubleshooting](#-troubleshooting)
+  - [Git Credential Manager on Linux](#git-credential-manager-on-linux)
 - [👥 Maintainers](#-maintainers)
 - [💬 Support](#-support)
 - [🙏 Acknowledgements](#-acknowledgements)
@@ -146,20 +167,20 @@ Want to see Nexkit in action? Watch our [video overview](https://www.youtube.com
 
 ## 🤖 Supported AI Agents
 
-| Agent                                                     | Support | Notes                                             |
-|-----------------------------------------------------------|---------|---------------------------------------------------|
-| [Claude Code](https://www.anthropic.com/claude-code)      | ✅ |                                                   |
-| [GitHub Copilot](https://code.visualstudio.com/)          | ✅ |                                                   |
-| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✅ |                                                   |
-| [Cursor](https://cursor.sh/)                              | ✅ |                                                   |
-| [Qwen Code](https://github.com/QwenLM/qwen-code)          | ✅ |                                                   |
-| [opencode](https://opencode.ai/)                          | ✅ |                                                   |
-| [Windsurf](https://windsurf.com/)                         | ✅ |                                                   |
-| [Kilo Code](https://github.com/Kilo-Org/kilocode)         | ✅ |                                                   |
-| [Auggie CLI](https://docs.augmentcode.com/cli/overview)   | ✅ |                                                   |
-| [Roo Code](https://roocode.com/)                          | ✅ |                                                   |
-| [Codex CLI](https://github.com/openai/codex)              | ✅ |                                                   |
-| [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/) | ⚠️ | Amazon Q Developer CLI [does not support](https://github.com/aws/amazon-q-developer-cli/issues/3064) custom arguments for slash commands. |
+| Agent                                                                                | Support | Notes                                                                                                                                     |
+| ------------------------------------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [Claude Code](https://www.anthropic.com/claude-code)                                 | ✅       |                                                                                                                                           |
+| [GitHub Copilot](https://code.visualstudio.com/)                                     | ✅       |                                                                                                                                           |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli)                            | ✅       |                                                                                                                                           |
+| [Cursor](https://cursor.sh/)                                                         | ✅       |                                                                                                                                           |
+| [Qwen Code](https://github.com/QwenLM/qwen-code)                                     | ✅       |                                                                                                                                           |
+| [opencode](https://opencode.ai/)                                                     | ✅       |                                                                                                                                           |
+| [Windsurf](https://windsurf.com/)                                                    | ✅       |                                                                                                                                           |
+| [Kilo Code](https://github.com/Kilo-Org/kilocode)                                    | ✅       |                                                                                                                                           |
+| [Auggie CLI](https://docs.augmentcode.com/cli/overview)                              | ✅       |                                                                                                                                           |
+| [Roo Code](https://roocode.com/)                                                     | ✅       |                                                                                                                                           |
+| [Codex CLI](https://github.com/openai/codex)                                         | ✅       |                                                                                                                                           |
+| [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/) | ⚠️       | Amazon Q Developer CLI [does not support](https://github.com/aws/amazon-q-developer-cli/issues/3064) custom arguments for slash commands. |
 
 ## 🔧 Nexkit CLI Reference
 
@@ -167,25 +188,25 @@ The `nexkit` command supports the following options:
 
 ### Commands
 
-| Command     | Description                                                    |
-|-------------|----------------------------------------------------------------|
-| `init`      | Initialize a new Nexkit project from the latest template      |
-| `check`     | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
+| Command | Description                                                                                                                            |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `init`  | Initialize a new Nexkit project from the latest template                                                                               |
+| `check` | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
 
 ### `nexkit init` Arguments & Options
 
-| Argument/Option        | Type     | Description                                                                  |
-|------------------------|----------|------------------------------------------------------------------------------|
-| `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
+| Argument/Option        | Type     | Description                                                                                                                                |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory)                                         |
 | `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, or `q` |
-| `--script`             | Option   | Script variant to use: `sh` (bash/zsh) or `ps` (PowerShell)                 |
-| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                             |
-| `--no-git`             | Flag     | Skip git repository initialization                                          |
-| `--here`               | Flag     | Initialize project in the current directory instead of creating a new one   |
-| `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation) |
-| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                 |
-| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                            |
-| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)  |
+| `--script`             | Option   | Script variant to use: `sh` (bash/zsh) or `ps` (PowerShell)                                                                                |
+| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                                                                                            |
+| `--no-git`             | Flag     | Skip git repository initialization                                                                                                         |
+| `--here`               | Flag     | Initialize project in the current directory instead of creating a new one                                                                  |
+| `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation)                                                           |
+| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                                                                                |
+| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                                                                                           |
+| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)                                                                  |
 
 ### Examples
 
@@ -232,16 +253,16 @@ nexkit check
 
 After running `nexkit init`, your AI coding agent will have access to these slash commands for structured development:
 
-| Command                     | Description                                                           |
-|-----------------------------|-----------------------------------------------------------------------|
-| `/nexkit.commit`           | Generate intelligent commit messages and commit staged code with work item context |
-| `/nexkit.implement-workitem` | Quick implementation workflow using Azure DevOps work item information |
-| `/nexkit.refine-workitem`  | Add refinement context to existing user stories via related improvement work items |
+| Command             | Description                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| `/nexkit.implement` | Quick implementation workflow using Azure DevOps work item information             |
+| `/nexkit.refine`    | Add refinement context to existing user stories via related improvement work items |
+| `/nexkit.commit`    | Generate intelligent commit messages and commit staged code with work item context |
 
 ### Environment Variables
 
-| Variable         | Description                                                                                    |
-|------------------|------------------------------------------------------------------------------------------------|
+| Variable         | Description                                                                                                                                                                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NEXKIT_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. Must be set in the context of the agent you're working with. |
 
 ## 📚 Core philosophy
@@ -255,11 +276,11 @@ Spec-Driven Development is a structured process that emphasizes:
 
 ## 🌟 Development phases
 
-| Phase | Focus | Key Activities |
-|-------|-------|----------------|
-| **0-to-1 Development** ("Greenfield") | Generate from scratch | <ul><li>Start with high-level requirements</li><li>Generate specifications</li><li>Plan implementation steps</li><li>Build production-ready applications</li></ul> |
-| **Creative Exploration** | Parallel implementations | <ul><li>Explore diverse solutions</li><li>Support multiple technology stacks & architectures</li><li>Experiment with UX patterns</li></ul> |
-| **Iterative Enhancement** ("Brownfield") | Brownfield modernization | <ul><li>Add features iteratively</li><li>Modernize legacy systems</li><li>Adapt processes</li></ul> |
+| Phase                                    | Focus                    | Key Activities                                                                                                                                                     |
+| ---------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **0-to-1 Development** ("Greenfield")    | Generate from scratch    | <ul><li>Start with high-level requirements</li><li>Generate specifications</li><li>Plan implementation steps</li><li>Build production-ready applications</li></ul> |
+| **Creative Exploration**                 | Parallel implementations | <ul><li>Explore diverse solutions</li><li>Support multiple technology stacks & architectures</li><li>Experiment with UX patterns</li></ul>                         |
+| **Iterative Enhancement** ("Brownfield") | Brownfield modernization | <ul><li>Add features iteratively</li><li>Modernize legacy systems</li><li>Adapt processes</li></ul>                                                                |
 
 ## 🎯 Experimental goals
 
@@ -457,8 +478,7 @@ rm gcm-linux_amd64.2.6.1.deb
 
 ## 👥 Maintainers
 
-- Den Delimarsky ([@localden](https://github.com/localden))
-- John Lam ([@jflam](https://github.com/jflam))
+- Eric De Carufel ([@decarufe](https://github.com/decarufe))
 
 ## 💬 Support
 

@@ -9,6 +9,7 @@ Given a work item ID or reference as $ARGUMENTS, execute the following work item
 1. **Parse Work Item Reference**
    - Extract work item ID from $ARGUMENTS (e.g., "12345", "#12345", "PBI 12345")
    - Set PROJECT to current working project (or ask if unknown and write it somewhere to remember)
+   - **IMPORTANT**: If no workitem is provided, ask the user to provide one and use that going forward.
 
 2. **Fetch Primary Work Item**
    - Call `mcp_azure-devops_wit_get_work_item` with:

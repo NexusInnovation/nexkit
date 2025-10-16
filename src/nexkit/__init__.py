@@ -1277,10 +1277,9 @@ def init(
 
     steps_lines.append(f"{step_num}. Start using slash commands with your AI agent:")
 
-    steps_lines.append("   - [cyan]/nexkit.implement[/] - Execute implementation workflow")
+    steps_lines.append("   - [cyan]/nexkit.implement[/] - Quick implementation using Azure DevOps work items")
+    steps_lines.append("   - [cyan]/nexkit.refine[/] - Add refinement context to user stories")
     steps_lines.append("   - [cyan]/nexkit.commit[/] - Generate commit messages with work item context")
-    steps_lines.append("   - [cyan]/nexkit.implement-workitem[/] - Quick implementation using Azure DevOps work items")
-    steps_lines.append("   - [cyan]/nexkit.refine-workitem[/] - Add refinement context to user stories")
 
     steps_panel = Panel("\n".join(steps_lines), title="Next Steps", border_style="cyan", padding=(1,2))
     console.print()

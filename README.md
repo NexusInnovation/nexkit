@@ -258,6 +258,7 @@ After running `nexkit init`, your AI coding agent will have access to these slas
 | `/nexkit.implement` | Quick implementation workflow using Azure DevOps work item information             |
 | `/nexkit.refine`    | Add refinement context to existing user stories via related improvement work items |
 | `/nexkit.commit`    | Generate intelligent commit messages and commit staged code with work item context |
+| `/nexkit.review`    | Perform detailed code review with best practices analysis                          |
 
 ### Environment Variables
 

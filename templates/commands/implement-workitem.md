@@ -1,14 +1,11 @@
 ---
 description: Complete implementation workflow for code changes with planning, development, testing, and review phases.
-scripts:
-  sh: scripts/bash/check-prerequisites.sh --json
-  ps: scripts/powershell/check-prerequisites.ps1 -Json
 ---
 
 Given the change description provided as an $ARGUMENTS, execute the following comprehensive implementation workflow:
 
 ## Phase 0 (optional): Look for work item reference
-1. **IF work tiem refernence is provided**
+1. **IF work item reference is provided**
    - **Fetch work item details**: Use the MCP Azure DevOps tools to fetch work item details for the given work item ID:
    - Call `mcp_azure-devops_wit_get_work_item` with the work item ID and current project
    - Extract: id, title, description, work item type, state, assigned to, acceptance criteria, area path, iteration path

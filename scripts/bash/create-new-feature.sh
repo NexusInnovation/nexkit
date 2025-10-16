@@ -67,9 +67,11 @@ fi
 NEXT=$((HIGHEST + 1))
 FEATURE_NUM=$(printf "%03d" "$NEXT")
 
-BRANCH_NAME=$(echo "$FEATURE_DESCRIPTION" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//')
-WORDS=$(echo "$BRANCH_NAME" | tr '-' '\n' | grep -v '^$' | head -3 | tr '\n' '-' | sed 's/-$//')
-BRANCH_NAME="${FEATURE_NUM}-${WORDS}"
+# Normalize feature description to create folder/branch name
+NORMALIZED=$(echo "$FEATURE_DESCRIPTION" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//')
+WORDS=$(echo "$NORMALIZED" | tr '-' '\n' | grep -v '^$' | head -7 | tr '\n' '-' | sed 's/-$//')
+SPEC_FOLDER="${FEATURE_NUM}-${WORDS}"
+BRANCH_NAME="feature/${SPEC_FOLDER}"
 
 if [ "$HAS_GIT" = true ]; then
     git checkout -b "$BRANCH_NAME"
@@ -77,7 +79,7 @@ else
     >&2 echo "[nexkit] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
 fi
 
-FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
+FEATURE_DIR="$SPECS_DIR/$SPEC_FOLDER"
 mkdir -p "$FEATURE_DIR"
 
 TEMPLATE="$REPO_ROOT/.nexkit/templates/spec-template.md"
@@ -85,13 +87,15 @@ SPEC_FILE="$FEATURE_DIR/spec.md"
 if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"; fi
 
 # Set the NEXKIT_FEATURE environment variable for the current session
-export NEXKIT_FEATURE="$BRANCH_NAME"
+export NEXKIT_FEATURE="$SPEC_FOLDER"
 
 if $JSON_MODE; then
-    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s","HAS_GIT":%s}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM" "$HAS_GIT"
 else
     echo "BRANCH_NAME: $BRANCH_NAME"
+    echo "SPEC_FOLDER: $SPEC_FOLDER"
     echo "SPEC_FILE: $SPEC_FILE"
     echo "FEATURE_NUM: $FEATURE_NUM"
-    echo "NEXKIT_FEATURE environment variable set to: $BRANCH_NAME"
+    echo "HAS_GIT: $HAS_GIT"
+    echo "NEXKIT_FEATURE environment variable set to: $SPEC_FOLDER"
 fi

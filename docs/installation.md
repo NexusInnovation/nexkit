@@ -82,17 +82,8 @@ uvx --from git+https://github.com/NexusInnovation/nexkit.git nexkit init <projec
 
 After initialization, you should see the following commands available in your AI agent:
 
-**Core Commands:**
-- `/nexkit.constitution` - Create project principles
-- `/nexkit.specify` - Create specifications
-- `/nexkit.plan` - Generate implementation plans  
-- `/nexkit.tasks` - Break down into actionable tasks
-- `/nexkit.implement` - Execute implementation
-
-**Optional Commands:**
-- `/nexkit.clarify` - Clarify underspecified areas
-- `/nexkit.analyze` - Cross-artifact consistency analysis
-- `/nexkit.checklist` - Generate quality checklists
+**Available Commands:**
+- `/nexkit.implement` - Execute implementation from specifications
 - `/nexkit.commit` - Generate intelligent commit messages
 - `/nexkit.implement-workitem` - Quick implementation with Azure DevOps work items
 - `/nexkit.refine-workitem` - Add refinement to existing user stories

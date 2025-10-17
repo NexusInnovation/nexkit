@@ -1210,7 +1210,7 @@ def init(
     # Git exclusion prompt (if git repository was initialized/exists)
     if git_initialized:
         console.print()
-        if typer.confirm("Would you like to exclude nexkit files from git version control?", default=False):
+        if typer.confirm("Would you like to exclude nexkit files from git version control?", default=True):
             try:
                 result = gitignore.add_nexkit_exclusions(project_path)
                 console.print(f"[green]✓[/green] Added nexkit exclusions to [cyan]{result.gitignore_path.name}[/cyan]")

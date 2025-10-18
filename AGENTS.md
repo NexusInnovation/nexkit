@@ -247,6 +247,39 @@ Different agents use different argument placeholders:
 - **Script placeholders**: `{SCRIPT}` (replaced with actual script path)
 - **Agent placeholders**: `__AGENT__` (replaced with agent name)
 
+## Modes Support
+
+In addition to commands, nexkit supports deploying custom "modes" or specialized assistant contexts for each agent. These provide reusable conversation contexts or specialized behaviors.
+
+### Mode Deployment Directories
+
+| Agent | Modes Directory | Format | Extension |
+|-------|-----------------|--------|-----------|
+| **GitHub Copilot** | `.github/chatmodes/` | Markdown | `.chatmode.md` |
+| **Claude Code** | `.claude/modes/` | Markdown | `.md` |
+| **Gemini CLI** | `.gemini/modes/` | TOML | `.toml` |
+| **Cursor** | `.cursor/modes/` | Markdown | `.md` |
+| **Qwen Code** | `.qwen/modes/` | TOML | `.toml` |
+| **opencode** | `.opencode/modes/` | Markdown | `.md` |
+| **Codex** | `.codex/modes/` | Markdown | `.md` |
+| **Windsurf** | `.windsurf/modes/` | Markdown | `.md` |
+| **Kilo Code** | `.kilocode/modes/` | Markdown | `.md` |
+| **Auggie** | `.augment/modes/` | Markdown | `.md` |
+| **Amazon Q** | `.amazonq/modes/` | Markdown | `.md` |
+
+### Creating Custom Modes
+
+Modes are created from templates in `templates/modes/` and automatically deployed to the appropriate directory based on the selected agent during initialization. The generic templates are renamed and converted to the agent-specific format as needed.
+
+**Example**: `templates/modes/dummy.md` → `.github/chatmodes/dummy.chatmode.md` (for Copilot)
+
+### Modes vs Commands
+
+- **Commands**: Actionable workflows with specific inputs (e.g., `/nexkit.implement`)
+- **Modes**: Reusable conversation contexts or specialized assistant behaviors (e.g., a code review mode, a documentation mode)
+
+Not all agents may support modes natively, but the directory structure allows for future compatibility.
+
 ## Testing New Agent Integration
 
 1. **Build test**: Run package creation script locally
@@ -266,6 +299,7 @@ Different agents use different argument placeholders:
 ## Future Considerations
 
 When adding new agents:
+
 - Consider the agent's native command/workflow patterns
 - Ensure compatibility with the Spec-Driven Development process
 - Document any special requirements or limitations

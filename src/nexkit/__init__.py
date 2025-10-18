@@ -1212,7 +1212,7 @@ def init(
         console.print()
         if typer.confirm("Would you like to exclude nexkit files from git version control?", default=True):
             try:
-                result = gitignore.add_nexkit_exclusions(project_path)
+                result = gitignore.add_nexkit_exclusions(project_path, agent_type=selected_ai)
                 console.print(f"[green]✓[/green] Added nexkit exclusions to [cyan]{result.gitignore_path.name}[/cyan]")
                 
                 # Show cleanup guidance if there are tracked files
@@ -1400,15 +1400,21 @@ def check():
 
 @app.command(name="add-exclusion")
 def add_exclusion(
-    path: Path = typer.Argument(Path.cwd(), help="Path to repository (defaults to current directory)")
+    path: Path = typer.Argument(Path.cwd(), help="Path to repository (defaults to current directory)"),
+    agent: str = typer.Option(None, "--agent", help="AI agent type (copilot, claude, gemini, cursor, etc.). Auto-detects if not specified.")
 ):
     """
     Add nexkit exclusion patterns to .gitignore file.
     
-    This command adds the following patterns to your repository's .gitignore:
+    This command adds nexkit-specific patterns to your repository's .gitignore,
+    including agent-specific mode/chatmode directories.
+    
+    Base patterns (always included):
     - .specify/
     - specs/
-    - .github/prompts/nexkit.*
+    
+    Agent-specific patterns (added based on --agent or auto-detection):
+    - Commands and modes directories for the selected agent
     
     The patterns are added in a clearly marked section that can be managed
     independently of other .gitignore entries.
@@ -1416,13 +1422,20 @@ def add_exclusion(
     Examples:
         nexkit add-exclusion
         nexkit add-exclusion /path/to/repo
+        nexkit add-exclusion --agent copilot
+        nexkit add-exclusion --agent claude /path/to/repo
     """
     show_banner()
     
     console.print("[cyan]Adding nexkit exclusions to .gitignore...[/cyan]\n")
     
+    # Validate agent if specified
+    if agent and agent not in AI_CHOICES:
+        console.print(f"[red]Error:[/red] Invalid agent '{agent}'. Choose from: {', '.join(AI_CHOICES.keys())}")
+        raise typer.Exit(1)
+    
     try:
-        result = gitignore.add_nexkit_exclusions(path)
+        result = gitignore.add_nexkit_exclusions(path, agent_type=agent)
         
         if result.already_configured:
             console.print("[yellow]ℹ[/yellow] Nexkit exclusions are already configured")

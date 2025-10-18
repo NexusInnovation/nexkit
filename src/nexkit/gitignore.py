@@ -16,6 +16,29 @@ from dataclasses import dataclass
 NEXKIT_SECTION_MARKER = "# Nexkit - Spec-Driven Development Tools"
 NEXKIT_SECTION_END_MARKER = "# End Nexkit exclusions"
 
+# Base patterns that are always included
+BASE_PATTERNS = [
+    ".specify/",
+    "specs/",
+]
+
+# Agent-specific mode and command patterns
+AGENT_MODE_PATTERNS = {
+    "copilot": [".github/prompts/nexkit.*", ".github/chatmodes/"],
+    "claude": [".claude/commands/nexkit.*", ".claude/modes/"],
+    "gemini": [".gemini/commands/nexkit.*", ".gemini/modes/"],
+    "cursor": [".cursor/commands/nexkit.*", ".cursor/modes/"],
+    "qwen": [".qwen/commands/nexkit.*", ".qwen/modes/"],
+    "opencode": [".opencode/command/nexkit.*", ".opencode/modes/"],
+    "windsurf": [".windsurf/workflows/nexkit.*", ".windsurf/modes/"],
+    "codex": [".codex/prompts/nexkit.*", ".codex/modes/"],
+    "kilocode": [".kilocode/workflows/nexkit.*", ".kilocode/modes/"],
+    "auggie": [".augment/commands/nexkit.*", ".augment/modes/"],
+    "roo": [".roo/commands/nexkit.*", ".roo/modes/"],
+    "q": [".amazonq/prompts/nexkit.*", ".amazonq/modes/"],
+}
+
+# Legacy pattern list for backward compatibility
 NEXKIT_PATTERNS = [
     ".specify/",
     "specs/",
@@ -65,6 +88,59 @@ class ExclusionStatus:
 
 
 # Core Functions
+def get_patterns_for_agent(agent_type: Optional[str] = None) -> List[str]:
+    """
+    Get gitignore patterns for a specific agent.
+    
+    Args:
+        agent_type: Agent identifier (e.g., 'copilot', 'claude', 'gemini')
+                   If None, returns only base patterns
+    
+    Returns:
+        List of patterns to exclude
+    """
+    patterns = BASE_PATTERNS.copy()
+    
+    if agent_type and agent_type in AGENT_MODE_PATTERNS:
+        patterns.extend(AGENT_MODE_PATTERNS[agent_type])
+    
+    return patterns
+
+
+def detect_agent_from_project(repo_path: Path) -> Optional[str]:
+    """
+    Attempt to detect which agent is being used in a project.
+    
+    Args:
+        repo_path: Path to repository
+    
+    Returns:
+        Agent type string if detected, None otherwise
+    """
+    # Check for agent-specific directories
+    agent_indicators = {
+        "copilot": [".github/prompts", ".github/chatmodes"],
+        "claude": [".claude/commands", ".claude/modes"],
+        "gemini": [".gemini/commands", ".gemini/modes"],
+        "cursor": [".cursor/commands", ".cursor/modes"],
+        "qwen": [".qwen/commands", ".qwen/modes"],
+        "opencode": [".opencode/command", ".opencode/modes"],
+        "windsurf": [".windsurf/workflows", ".windsurf/modes"],
+        "codex": [".codex/prompts", ".codex/modes"],
+        "kilocode": [".kilocode/workflows", ".kilocode/modes"],
+        "auggie": [".augment/commands", ".augment/modes"],
+        "roo": [".roo/commands", ".roo/modes"],
+        "q": [".amazonq/prompts", ".amazonq/modes"],
+    }
+    
+    for agent, paths in agent_indicators.items():
+        for path in paths:
+            if (repo_path / path).exists():
+                return agent
+    
+    return None
+
+
 def is_git_repository(path: Path) -> bool:
     """
     Check if a path is within a git repository.
@@ -116,12 +192,13 @@ def get_git_root(path: Path) -> Optional[Path]:
         return None
 
 
-def get_tracked_nexkit_files(repo_path: Path) -> List[Path]:
+def get_tracked_nexkit_files(repo_path: Path, agent_type: Optional[str] = None) -> List[Path]:
     """
     Get list of nexkit files currently tracked by git.
     
     Args:
         repo_path: Path to repository (any path within repo)
+        agent_type: Optional agent type to check agent-specific patterns
     
     Returns:
         List of relative paths (from repo root) of tracked nexkit files
@@ -139,8 +216,19 @@ def get_tracked_nexkit_files(repo_path: Path) -> List[Path]:
     
     tracked_files = []
     
-    # Check each pattern
-    patterns_to_check = [".specify", "specs", ".github/prompts"]
+    # Base patterns to check
+    patterns_to_check = [".specify", "specs"]
+    
+    # Add agent-specific patterns if agent is specified
+    if agent_type and agent_type in AGENT_MODE_PATTERNS:
+        for pattern in AGENT_MODE_PATTERNS[agent_type]:
+            # Extract directory path from pattern (remove wildcards)
+            clean_pattern = pattern.rstrip("*").rstrip("/")
+            if clean_pattern:
+                patterns_to_check.append(clean_pattern)
+    else:
+        # If no agent specified, check common locations
+        patterns_to_check.extend([".github/prompts", ".github/chatmodes"])
     
     for pattern in patterns_to_check:
         try:
@@ -183,9 +271,12 @@ def has_nexkit_section(gitignore_path: Path) -> bool:
         return False
 
 
-def get_nexkit_section_content() -> str:
+def get_nexkit_section_content(agent_type: Optional[str] = None) -> str:
     """
     Generate the complete nexkit exclusion section content.
+    
+    Args:
+        agent_type: Optional agent type for agent-specific patterns
     
     Returns:
         Formatted section with markers and patterns
@@ -195,10 +286,16 @@ def get_nexkit_section_content() -> str:
         NEXKIT_SECTION_MARKER,
         "# Generated by: nexkit add-exclusion",
         "# To remove: nexkit remove-exclusion",
-        "",
     ]
     
-    lines.extend(NEXKIT_PATTERNS)
+    if agent_type:
+        lines.append(f"# Agent: {agent_type}")
+    
+    lines.append("")
+    
+    # Get patterns for the specified agent
+    patterns = get_patterns_for_agent(agent_type)
+    lines.extend(patterns)
     lines.append("")
     lines.append(NEXKIT_SECTION_END_MARKER)
     lines.append("")
@@ -206,12 +303,14 @@ def get_nexkit_section_content() -> str:
     return "\n".join(lines)
 
 
-def add_nexkit_exclusions(repo_path: Path) -> ExclusionResult:
+def add_nexkit_exclusions(repo_path: Path, agent_type: Optional[str] = None) -> ExclusionResult:
     """
     Add nexkit exclusion patterns to repository's .gitignore file.
     
     Args:
         repo_path: Path to repository (can be any path within repo)
+        agent_type: Optional agent type for agent-specific patterns.
+                   If None, attempts to detect from project structure.
     
     Returns:
         ExclusionResult with operation details
@@ -232,11 +331,15 @@ def add_nexkit_exclusions(repo_path: Path) -> ExclusionResult:
     if not git_root:
         raise NotGitRepositoryError("Cannot determine git repository root")
     
+    # Auto-detect agent if not specified
+    if agent_type is None:
+        agent_type = detect_agent_from_project(git_root)
+    
     gitignore_path = git_root / ".gitignore"
     
     # Check if already configured
     if has_nexkit_section(gitignore_path):
-        tracked = get_tracked_nexkit_files(repo_path)
+        tracked = get_tracked_nexkit_files(repo_path, agent_type)
         return ExclusionResult(
             success=True,
             message="Nexkit exclusions already configured",
@@ -255,8 +358,11 @@ def add_nexkit_exclusions(repo_path: Path) -> ExclusionResult:
         except UnicodeDecodeError as e:
             raise OSError(f".gitignore file encoding issue: {e}")
     
-    # Prepare new content
-    nexkit_section = get_nexkit_section_content()
+    # Prepare new content with agent-specific patterns
+    nexkit_section = get_nexkit_section_content(agent_type)
+    
+    # Get patterns that will be added
+    patterns_added = get_patterns_for_agent(agent_type)
     
     # Ensure proper spacing
     if existing_content and not existing_content.endswith("\n"):
@@ -281,13 +387,13 @@ def add_nexkit_exclusions(repo_path: Path) -> ExclusionResult:
         raise OSError(f"Failed to update .gitignore: {e}")
     
     # Check for tracked files
-    tracked = get_tracked_nexkit_files(repo_path)
+    tracked = get_tracked_nexkit_files(repo_path, agent_type)
     
     return ExclusionResult(
         success=True,
         message="Successfully added nexkit exclusions to .gitignore",
         gitignore_path=gitignore_path,
-        patterns_affected=NEXKIT_PATTERNS.copy(),
+        patterns_affected=patterns_added,
         already_configured=False,
         tracked_files=tracked,
         git_root=git_root,
@@ -405,12 +511,13 @@ def remove_nexkit_exclusions(repo_path: Path) -> ExclusionResult:
     )
 
 
-def check_exclusion_status(repo_path: Path) -> ExclusionStatus:
+def check_exclusion_status(repo_path: Path, agent_type: Optional[str] = None) -> ExclusionStatus:
     """
     Check current status of nexkit git exclusion.
     
     Args:
         repo_path: Path to repository
+        agent_type: Optional agent type for agent-specific pattern checking
     
     Returns:
         ExclusionStatus with current state
@@ -425,19 +532,23 @@ def check_exclusion_status(repo_path: Path) -> ExclusionStatus:
     if not git_root:
         raise NotGitRepositoryError("Cannot determine git repository root")
     
+    # Auto-detect agent if not specified
+    if agent_type is None:
+        agent_type = detect_agent_from_project(git_root)
+    
     gitignore_path = git_root / ".gitignore"
     has_gitignore = gitignore_path.exists()
     is_excluded = has_nexkit_section(gitignore_path) if has_gitignore else False
     
-    # Determine missing patterns
+    # Determine missing patterns based on agent
     missing_patterns = []
     if not is_excluded:
-        missing_patterns = NEXKIT_PATTERNS.copy()
+        missing_patterns = get_patterns_for_agent(agent_type)
     
     # Check tracked files
     tracked_files = []
     try:
-        tracked_files = get_tracked_nexkit_files(repo_path)
+        tracked_files = get_tracked_nexkit_files(repo_path, agent_type)
     except Exception:
         pass  # If we can't check, just leave empty
     

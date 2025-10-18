@@ -100,6 +100,34 @@ generate_commands() {
   done
 }
 
+generate_modes() {
+  local agent=$1 ext=$2 output_dir=$3
+  mkdir -p "$output_dir"
+  for template in templates/modes/*.md; do
+    [[ -f "$template" ]] || continue
+    local name body
+    name=$(basename "$template" .md)
+    
+    # Normalize line endings
+    file_content=$(tr -d '\r' < "$template")
+    
+    # Apply path substitutions
+    body=$(printf '%s\n' "$file_content" | sed "s/__AGENT__/$agent/g" | rewrite_paths)
+    
+    case $ext in
+      toml)
+        # For TOML format, wrap content as a mode prompt
+        { echo "description = \"Custom mode: $name\""; echo; echo "prompt = \"\"\""; echo "$body"; echo "\"\"\""; } > "$output_dir/$name.$ext" ;;
+      chatmode.md)
+        # For Copilot chat modes, use .chatmode.md extension
+        echo "$body" > "$output_dir/$name.$ext" ;;
+      md)
+        # For other markdown-based agents
+        echo "$body" > "$output_dir/$name.$ext" ;;
+    esac
+  done
+}
+
 build_variant() {
   local agent=$1 script=$2
   local base_dir="$GENRELEASES_DIR/sdd-${agent}-package-${script}"
@@ -129,7 +157,7 @@ build_variant() {
     esac
   fi
   
-  [[ -d templates ]] && { mkdir -p "$SPEC_DIR/templates"; find templates -type f -not -path "templates/commands/*" -not -name "vscode-settings.json" -exec cp --parents {} "$SPEC_DIR"/ \; ; echo "Copied templates -> .specify/templates"; }
+  [[ -d templates ]] && { mkdir -p "$SPEC_DIR/templates"; find templates -type f -not -path "templates/commands/*" -not -path "templates/modes/*" -not -name "vscode-settings.json" -exec cp --parents {} "$SPEC_DIR"/ \; ; echo "Copied templates -> .specify/templates"; }
   
   # NOTE: We substitute {ARGS} internally. Outward tokens differ intentionally:
   #   * Markdown/prompt (claude, copilot, cursor, opencode): $ARGUMENTS
@@ -139,46 +167,70 @@ build_variant() {
   case $agent in
     claude)
       mkdir -p "$base_dir/.claude/commands"
-      generate_commands claude md "\$ARGUMENTS" "$base_dir/.claude/commands" "$script" ;;
+      generate_commands claude md "\$ARGUMENTS" "$base_dir/.claude/commands" "$script"
+      mkdir -p "$base_dir/.claude/modes"
+      generate_modes claude md "$base_dir/.claude/modes" ;;
     gemini)
       mkdir -p "$base_dir/.gemini/commands"
       generate_commands gemini toml "{{args}}" "$base_dir/.gemini/commands" "$script"
-      [[ -f agent_templates/gemini/GEMINI.md ]] && cp agent_templates/gemini/GEMINI.md "$base_dir/GEMINI.md" ;;
+      [[ -f agent_templates/gemini/GEMINI.md ]] && cp agent_templates/gemini/GEMINI.md "$base_dir/GEMINI.md"
+      mkdir -p "$base_dir/.gemini/modes"
+      generate_modes gemini toml "$base_dir/.gemini/modes" ;;
     copilot)
       mkdir -p "$base_dir/.github/prompts"
       generate_commands copilot prompt.md "\$ARGUMENTS" "$base_dir/.github/prompts" "$script"
       # Create VS Code workspace settings
       mkdir -p "$base_dir/.vscode"
       [[ -f templates/vscode-settings.json ]] && cp templates/vscode-settings.json "$base_dir/.vscode/settings.json"
+      mkdir -p "$base_dir/.github/chatmodes"
+      generate_modes copilot chatmode.md "$base_dir/.github/chatmodes"
       ;;
     cursor)
       mkdir -p "$base_dir/.cursor/commands"
-      generate_commands cursor md "\$ARGUMENTS" "$base_dir/.cursor/commands" "$script" ;;
+      generate_commands cursor md "\$ARGUMENTS" "$base_dir/.cursor/commands" "$script"
+      mkdir -p "$base_dir/.cursor/modes"
+      generate_modes cursor md "$base_dir/.cursor/modes" ;;
     qwen)
       mkdir -p "$base_dir/.qwen/commands"
       generate_commands qwen toml "{{args}}" "$base_dir/.qwen/commands" "$script"
-      [[ -f agent_templates/qwen/QWEN.md ]] && cp agent_templates/qwen/QWEN.md "$base_dir/QWEN.md" ;;
+      [[ -f agent_templates/qwen/QWEN.md ]] && cp agent_templates/qwen/QWEN.md "$base_dir/QWEN.md"
+      mkdir -p "$base_dir/.qwen/modes"
+      generate_modes qwen toml "$base_dir/.qwen/modes" ;;
     opencode)
       mkdir -p "$base_dir/.opencode/command"
-      generate_commands opencode md "\$ARGUMENTS" "$base_dir/.opencode/command" "$script" ;;
+      generate_commands opencode md "\$ARGUMENTS" "$base_dir/.opencode/command" "$script"
+      mkdir -p "$base_dir/.opencode/modes"
+      generate_modes opencode md "$base_dir/.opencode/modes" ;;
     windsurf)
       mkdir -p "$base_dir/.windsurf/workflows"
-      generate_commands windsurf md "\$ARGUMENTS" "$base_dir/.windsurf/workflows" "$script" ;;
+      generate_commands windsurf md "\$ARGUMENTS" "$base_dir/.windsurf/workflows" "$script"
+      mkdir -p "$base_dir/.windsurf/modes"
+      generate_modes windsurf md "$base_dir/.windsurf/modes" ;;
     codex)
       mkdir -p "$base_dir/.codex/prompts"
-      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts" "$script" ;;
+      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts" "$script"
+      mkdir -p "$base_dir/.codex/modes"
+      generate_modes codex md "$base_dir/.codex/modes" ;;
     kilocode)
       mkdir -p "$base_dir/.kilocode/workflows"
-      generate_commands kilocode md "\$ARGUMENTS" "$base_dir/.kilocode/workflows" "$script" ;;
+      generate_commands kilocode md "\$ARGUMENTS" "$base_dir/.kilocode/workflows" "$script"
+      mkdir -p "$base_dir/.kilocode/modes"
+      generate_modes kilocode md "$base_dir/.kilocode/modes" ;;
     auggie)
       mkdir -p "$base_dir/.augment/commands"
-      generate_commands auggie md "\$ARGUMENTS" "$base_dir/.augment/commands" "$script" ;;
+      generate_commands auggie md "\$ARGUMENTS" "$base_dir/.augment/commands" "$script"
+      mkdir -p "$base_dir/.augment/modes"
+      generate_modes auggie md "$base_dir/.augment/modes" ;;
     roo)
       mkdir -p "$base_dir/.roo/commands"
-      generate_commands roo md "\$ARGUMENTS" "$base_dir/.roo/commands" "$script" ;;
+      generate_commands roo md "\$ARGUMENTS" "$base_dir/.roo/commands" "$script"
+      mkdir -p "$base_dir/.roo/modes"
+      generate_modes roo md "$base_dir/.roo/modes" ;;
     q)
       mkdir -p "$base_dir/.amazonq/prompts"
-      generate_commands q md "\$ARGUMENTS" "$base_dir/.amazonq/prompts" "$script" ;;
+      generate_commands q md "\$ARGUMENTS" "$base_dir/.amazonq/prompts" "$script"
+      mkdir -p "$base_dir/.amazonq/modes"
+      generate_modes q md "$base_dir/.amazonq/modes" ;;
   esac
   ( cd "$base_dir" && zip -r "../nexkit-template-${agent}-${script}-${NEW_VERSION}.zip" . )
   echo "Created $GENRELEASES_DIR/nexkit-template-${agent}-${script}-${NEW_VERSION}.zip"
